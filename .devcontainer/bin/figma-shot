@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Export a Figma frame/node as PNG for visual comparison.
+#
+# Usage: figma-shot <figma-url-with-node-id> [out.png] [scale=1]
+# Env:   FIGMA_API_KEY
+set -euo pipefail
+
+: "${FIGMA_API_KEY:?FIGMA_API_KEY is not set}"
+url="${1:?figma url required}"
+scale="${3:-1}"
+
+file_key="$(echo "$url" | sed -nE 's#.*figma\.com/(design|file|proto)/([^/?]+).*#\2#p')"
+# A branch URL (/design/<key>/branch/<branchKey>/...) uses the branch key
+branch_key="$(echo "$url" | sed -nE 's#.*/branch/([^/?]+).*#\1#p')"
+[ -n "$branch_key" ] && file_key="$branch_key"
+node_id="$(echo "$url" | sed -nE 's#.*[?&]node-id=([^&]+).*#\1#p' | sed 's/%3A/:/g; s/-/:/g')"
+[ -n "$file_key" ] && [ -n "$node_id" ] || { echo "Could not parse file key / node-id from: $url" >&2; exit 1; }
+
+out="${2:-/tmp/ai-artifacts/figma/${file_key}_${node_id//:/-}.png}"
+mkdir -p "$(dirname "$out")"
+
+image_url="$(curl -sS --fail-with-body -H "X-Figma-Token: $FIGMA_API_KEY" \
+  "https://api.figma.com/v1/images/$file_key?ids=$node_id&format=png&scale=$scale" \
+  | jq -r --arg id "$node_id" '.images[$id] // empty')"
+[ -n "$image_url" ] || { echo "Figma did not return an image for node $node_id" >&2; exit 1; }
+
+curl -sS --fail -o "$out" "$image_url"
+echo "$out"

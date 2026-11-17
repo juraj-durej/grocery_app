@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -f .env ] || ( [ -f ../../.env ] && cp ../../.env .env && npm install --prefer-offline )"
+          }
+        ]
+      }
+    ]
+  }
+}
