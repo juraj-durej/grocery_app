@@ -1,21 +1,16 @@
 import { detectBot } from '@arcjet/next';
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+import { createServerClient } from '@supabase/ssr';
 import createMiddleware from 'next-intl/middleware';
-import type { NextFetchEvent, NextRequest } from 'next/server';
+import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import arcjet from '@/libs/Arcjet';
+import { Env } from '@/libs/Env';
 import { routing } from './libs/I18nRouting';
 
 const handleI18nRouting = createMiddleware(routing);
 
-const isProtectedRoute = createRouteMatcher(['/dashboard(.*)', '/:locale/dashboard(.*)']);
-
-const isAuthPage = createRouteMatcher([
-  '/sign-in(.*)',
-  '/:locale/sign-in(.*)',
-  '/sign-up(.*)',
-  '/:locale/sign-up(.*)',
-]);
+const isProtectedRoute = (request: NextRequest) =>
+  /^(\/[^/]+)?\/dashboard(\/.*)?$/u.test(request.nextUrl.pathname);
 
 // Improve security with Arcjet
 const aj = arcjet.withRule(
@@ -31,7 +26,12 @@ const aj = arcjet.withRule(
   }),
 );
 
-export default async function proxy(request: NextRequest, event: NextFetchEvent) {
+/**
+ * Runs Arcjet, i18n routing and, for protected routes only, Supabase session refresh and auth check.
+ * @param request - The incoming request.
+ * @returns The i18n response, a redirect to sign-in, or a 403 for denied bots.
+ */
+export default async function proxy(request: NextRequest) {
   // Verify the request with Arcjet
   // Use `process.env` instead of Env to reduce bundle size in middleware
   if (process.env.ARCJET_KEY) {
@@ -42,26 +42,39 @@ export default async function proxy(request: NextRequest, event: NextFetchEvent)
     }
   }
 
-  // Clerk keyless mode doesn't work with i18n, this is why we need to run the middleware conditionally
-  if (isAuthPage(request) || isProtectedRoute(request)) {
-    // Match Clerk's documented middleware composition pattern, `return await` is not necessary.
-    // oxlint-disable-next-line typescript/return-await
-    return clerkMiddleware(async (auth, req) => {
-      if (isProtectedRoute(req)) {
-        const locale = req.nextUrl.pathname.match(/(\/.*)\/dashboard/u)?.at(1) ?? '';
+  const response = handleI18nRouting(request);
 
-        const signInUrl = new URL(`${locale}/sign-in`, req.url);
-
-        await auth.protect({
-          unauthenticatedUrl: signInUrl.toString(),
-        });
-      }
-
-      return handleI18nRouting(req);
-    })(request, event);
+  if (!isProtectedRoute(request)) {
+    return response;
   }
 
-  return handleI18nRouting(request);
+  const supabase = createServerClient(
+    Env.NEXT_PUBLIC_SUPABASE_URL,
+    Env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+    {
+      cookies: {
+        getAll: () => request.cookies.getAll(),
+        setAll: (cookiesToSet) => {
+          for (const { name, value, options } of cookiesToSet) {
+            request.cookies.set(name, value);
+            response.cookies.set(name, value, options);
+          }
+        },
+      },
+    },
+  );
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    const locale = request.nextUrl.pathname.match(/(\/.*)\/dashboard/u)?.at(1) ?? '';
+
+    return NextResponse.redirect(new URL(`${locale}/sign-in`, request.url));
+  }
+
+  return response;
 }
 
 export const config = {

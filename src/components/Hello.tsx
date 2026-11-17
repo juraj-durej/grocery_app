@@ -1,17 +1,20 @@
-import { currentUser } from '@clerk/nextjs/server';
 import { getTranslations } from 'next-intl/server';
+import { createSupabaseServerClient } from '@/libs/SupabaseServer';
 import { Sponsors } from './Sponsors';
 
 export const Hello = async () => {
   const t = await getTranslations('Dashboard');
-  const user = await currentUser();
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   return (
     <>
       <p>
         {`👋 `}
         {t('hello_message', {
-          email: user?.primaryEmailAddress?.emailAddress ?? '',
+          email: user?.email ?? '',
         })}
       </p>
       <p>
