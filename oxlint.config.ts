@@ -35,6 +35,15 @@ export default defineConfig({
     'jsdoc/require-returns': 'error',
     'jsdoc/require-returns-description': 'error',
   },
+  overrides: [
+    {
+      // shadcn/ui generated primitives
+      files: ['src/components/ui/**'],
+      rules: {
+        'jsx-a11y/prefer-tag-over-role': 'off', // Field uses role="group" on a div by design
+      },
+    },
+  ],
   options: {
     reportUnusedDisableDirectives: 'error',
   },
