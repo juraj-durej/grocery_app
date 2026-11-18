@@ -5,6 +5,9 @@ import { defineConfig, devices } from '@playwright/test';
 // to avoid conflicts with the Next.js default port 3000.
 const PORT = process.env.PORT ?? '3008';
 
+// PGlite port, set per git worktree in .env.local so parallel tasks don't clash (default 5432).
+const DB_PORT = process.env.DB_PORT ?? '5432';
+
 // Set webServer.url and use.baseURL with the location of the WebServer respecting the correct set port
 const baseURL = `http://localhost:${PORT}`;
 
@@ -31,8 +34,8 @@ export default defineConfig<ChromaticConfig>({
   // https://playwright.dev/docs/test-advanced#launching-a-development-web-server-during-the-tests
   webServer: {
     command: process.env.CI
-      ? "pglite-server -m 100 --run 'run-s db:migrate start'"
-      : "pglite-server -m 100 --run 'run-s db:migrate dev:next'",
+      ? `pglite-server -m 100 --port=${DB_PORT} --run 'run-s db:migrate start'`
+      : `pglite-server -m 100 --port=${DB_PORT} --run 'run-s db:migrate dev:next'`,
     url: baseURL,
     timeout: 60 * 1000,
     reuseExistingServer: !process.env.CI,
