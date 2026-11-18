@@ -1,54 +1,46 @@
 ---
-description: Implement a Jira ticket end-to-end (code, tests, Figma check, PR, Jira update)
-argument-hint: <JIRA-KEY>
+description: Implement a Jira ticket and/or instructions end-to-end (code, tests, Figma check, PR, CI, Jira update)
+argument-hint: [JIRA-KEY] [instructions]
 ---
 
-Implement Jira ticket **$ARGUMENTS** end-to-end, autonomously. Follow `AGENTS.md` strictly (you are the coordinator; delegate implementation to Sonnet sub-agents, run independent parts in parallel).
+Solve the task described by **$ARGUMENTS** end-to-end, autonomously. Read and obey `AGENTS.md` strictly.
+
+## Role
+
+You are the **coordinator only**. Delegate all implementation, testing and fixing to Sonnet subagents (Agent tool, `model: "sonnet"`), in parallel when parts are independent (assign clear file ownership). Every subagent prompt must include the relevant `AGENTS.md` rules, the task context, Figma design context and the ports below. You run only git/gh/Jira/Figma/orchestration steps yourself.
+
+## Arguments
+
+If the first word matches `^[A-Z][A-Z0-9]+-[0-9]+$` it is the Jira key; the rest is additional instructions. Instructions override Jira on conflict. If there is neither, stop and ask.
 
 ## Environment
-- You run inside a dev container, in a git worktree already on the task branch (`git branch --show-current`). Don't create or switch branches.
-- Helpers on PATH: `jira` (Jira REST), `figma-shot` (export a Figma node as PNG), `gh` (authenticated via `GH_TOKEN`).
-- MCP: `playwright` (headless Chromium) and `figma` (`get_figma_data`, `download_figma_images`).
-- Base branch: `$AI_BASE_BRANCH` (fallback `development`). Database: embedded PGlite only — never Docker/remote Postgres.
-- Artifacts (screenshots, reports): `/tmp/ai-artifacts/` — never commit them.
 
-## 1. Understand the ticket
-1. `jira get $ARGUMENTS` — read title, description, acceptance criteria, comments, Figma links.
-2. If status isn't `$JIRA_STATUS_IN_PROGRESS`, run `jira transition $ARGUMENTS "$JIRA_STATUS_IN_PROGRESS"`.
-3. For every Figma link: call `get_figma_data` (layout, colors, typography, spacing, radii) and `figma-shot "<url>"` to get the reference PNG. Read the PNG.
-4. Explore the relevant code, then write a short plan (files, components, DB changes, tests). Don't ask for confirmation — proceed. Only stop and ask if the ticket is contradictory or impossible.
+- Work in the current worktree (`claude --worktree`); a SessionStart hook has already set up `.env.local` and deps.
+- Read `PORT`, `DB_PORT`, `DATABASE_URL`, `NEXT_PUBLIC_APP_URL` from `.env.local`. Never hard-code 3000/5432.
+- Bun is not installed: use `npm run <script>` (only the scripts allowed in `AGENTS.md`).
+- Jira: Atlassian MCP tools (`getAccessibleAtlassianResources` for cloudId, `getJiraIssue`, `transitionJiraIssue`, `addOrEditJiraIssueComment`). Figma: Figma MCP (`get_screenshot`, `get_design_context`, `get_metadata`). GitHub: `git` and `gh`.
 
-## 2. Implement
-- Delegate coding to sub-agents (model: sonnet) with precise briefs incl. the Figma values (exact colors, font sizes/weights/line-heights, spacing, radii) and the relevant `AGENTS.md` rules.
-- Reuse existing components and Tailwind tokens; add new tokens only if Figma requires them.
-- All user-visible strings via next-intl in every locale under `src/locales`.
-- DB schema change → `npm run db:generate` then `npm run db:migrate` (with PGlite running). Never `drizzle push`.
+## Pipeline
 
-## 3. Tests
-- Unit tests `*.test.ts` co-located; Playwright tests `tests/**/*.e2e.ts` covering the acceptance criteria.
-- Run `bun run test` and `bun run test:e2e` — all must pass.
+1. **Context**
+   - With a key: fetch the issue (summary, description, acceptance criteria, comments, attachments, links), transition it to **In Progress**, collect Figma URLs (description, comments, remote links), then fetch Figma screenshots and design context for each frame (keep frame sizes).
+   - Run `scripts/ai/rename-tab.sh "<KEY> <short title>"` (without a key: a short summary of the instructions).
+2. **Sync**: `git fetch origin develop`, ensure the tree is clean, then create the branch from `origin/develop`: `git switch -c <branch> origin/develop` (or `git branch -m` the worktree's auto branch after resetting it to `origin/develop`). Name: `feat/<key-lowercase>-<slug>` or `fix/<key-lowercase>-<slug>`; without a key `feat/<slug>`.
+3. **Implement**: write a brief plan, then spawn implementation subagent(s). DB schema changes: drizzle generate + migrate, never push.
+4. **Test** (Sonnet subagents)
+   - Unit tests (`*.test.ts`, colocated) and Playwright e2e (`tests/*.e2e.ts`) per `AGENTS.md` test conventions; run `npm run test` and `npm run test:e2e`.
+   - If Figma screens exist: a subagent runs the app on the worktree port, captures Playwright screenshots of the relevant pages/states at the Figma frame viewport sizes, compares them with the Figma screenshots (layout, spacing, colors, typography, copy), fixes discrepancies and repeats until they match. It reports any remaining deviations.
+5. **Quality gate**: `npm run lint`, `npm run check:types`, `npm run check:i18n`, `npm run build-local` must all pass. Loop: subagent fixes, then recheck.
+6. **Commit and PR**
+   - Commit per `AGENTS.md` Conventional Commits; with a key it is the first word: `GRO-12 feat: add shopping list sharing` (without: `feat: ...`). Logical commits are fine. End each commit message with the attribution trailer the session harness specifies.
+   - `git push -u origin <branch>`, then `gh pr create --base develop`. Title uses the commit format. Body: summary, Jira link, what changed, tests, Figma check result (end with the harness-specified PR attribution line).
+7. **CI loop** (max 5 iterations): `gh pr checks <pr> --watch`. On failure, read `gh run view <id> --log-failed`, delegate the fix to a Sonnet subagent, rerun the local quality gate, commit (`<KEY> fix: ...`), push, repeat. After 5 iterations stop and report what still fails.
+8. **Jira** (with a key): add a comment with the PR link, 2-4 short bullets of what was done, and the CI status; transition to **In Review**. If CI fixes landed after the first comment, add an updated comment.
+9. **Report** briefly to the user: PR URL, branch, CI status, Jira updated or not, ports used.
 
-## 4. Verify the UI against Figma (skip only if the ticket has no UI)
-1. Start the app in the background (allowed exception to the script list): `npm run dev > /tmp/ai-artifacts/dev.log 2>&1 &` and wait for `http://localhost:3000`.
-2. With Playwright MCP: `browser_resize` to the Figma frame width (and a mobile width if a mobile design exists), `browser_navigate` to the page, `browser_take_screenshot`.
-3. Compare the screenshot with the Figma PNG side by side (read both images): layout, spacing, alignment, colors, typography, icons, states.
-4. Use `browser_evaluate` with `getComputedStyle` on key elements to check exact values (color, background, font-family/size/weight, line-height, padding/gap, border-radius) against `get_figma_data`.
-5. Fix mismatches and repeat (max 5 rounds). Record the remaining differences (if any) and why.
-6. Stop the dev server.
+## Guardrails
 
-## 5. Quality gate
-Run and fix until all pass: `bun run lint`, `bun run check:types`, `bun run check:deps`, `bun run check:i18n`, `bun run test`, `bun run build-local`.
-
-## 6. Commit, push, PR
-1. Review `git status` / `git diff` — no secrets, no `.env*.local`, no artifacts, no unrelated changes.
-2. Commit with Conventional Commits per `AGENTS.md` (`type: summary`, no scope); split into logical commits if useful. Never `--no-verify`; fix hook failures.
-3. `git push -u origin HEAD`. Never force-push; never push to `$AI_BASE_BRANCH`/`main`.
-4. `gh pr create --base "${AI_BASE_BRANCH:-development}" --title "<type>: <summary>" --body-file <file>` where the body contains: `Jira: $JIRA_BASE_URL/browse/$ARGUMENTS`, summary of changes, tests added, Figma verification result, how to test.
-
-## 7. Update Jira
-1. Write `/tmp/ai-artifacts/jira-comment.md` (plain text, `- ` bullets): what was done, key files, tests, Figma check result, notes/open points.
-2. `jira comment $ARGUMENTS /tmp/ai-artifacts/jira-comment.md "<PR_URL>"`
-3. `jira link $ARGUMENTS "<PR_URL>" "PR: <PR title>"`
-4. `jira transition $ARGUMENTS "$JIRA_STATUS_IN_REVIEW"`
-
-Finish with a 3–5 line summary: PR URL, Jira status, anything needing human attention.
+- Never push to `develop` or `main`. Force-push only your own feature branch, and only when needed.
+- Never run `drizzle push`.
+- Never modify CI, or skip/disable tests, to make checks pass.
+- Ask the user only when a requirement is ambiguous and truly blocking; otherwise decide and note the assumption in the PR.
