@@ -1,6 +1,6 @@
 ---
 description: Start an AI agent for a Jira task or free-text instructions (worktree + Zellij tab)
-argument-hint: [JIRA-KEY] [instructions]
+argument-hint: [JIRA-KEY] [--plan] [instructions]
 allowed-tools: Bash(scripts/ai/start-task.sh:*)
 ---
 

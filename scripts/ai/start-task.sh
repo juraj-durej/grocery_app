@@ -2,7 +2,8 @@
 # Start one AI agent: opens a Zellij tab running Claude Code in its own git worktree
 # (`claude --worktree`) with the /solve-ticket command.
 #
-# Usage: scripts/ai/start-task.sh [JIRA-KEY] [instructions...]
+# Usage: scripts/ai/start-task.sh [--plan] [JIRA-KEY] [instructions...]
+#   --plan (optional, first) stops /solve-ticket after the technical plan for approval.
 #   KEY is the first argument when it looks like GRO-12; everything else is free-text instructions.
 set -euo pipefail
 
@@ -10,16 +11,21 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 # shellcheck source=common.sh
 . "$SCRIPT_DIR/common.sh"
 
-case "${1:-}" in -h|--help) sed -n '2,7p' "$0"; exit 0 ;; esac
-[ "$#" -gt 0 ] || die "Usage: $0 [JIRA-KEY] [instructions...]"
+case "${1:-}" in -h|--help) sed -n "2,7p" "$0"; exit 0 ;; esac
+[ "$#" -gt 0 ] || die "Usage: $0 [--plan] [JIRA-KEY] [instructions...]"
 
+plan=""
+if [ "$1" = "--plan" ]; then
+  plan="--plan"
+  shift
+fi
 key=""
-if [[ "$1" =~ ^[A-Z][A-Z0-9]+-[0-9]+$ ]]; then
+if [ "$#" -gt 0 ] && [[ "$1" =~ ^[A-Z][A-Z0-9]+-[0-9]+$ ]]; then
   key="$1"
   shift
 fi
 instructions="$*"
-[ -n "$key" ] || [ -n "$instructions" ] || die "Usage: $0 [JIRA-KEY] [instructions...]"
+[ -n "$key" ] || [ -n "$instructions" ] || die "Usage: $0 [--plan] [JIRA-KEY] [instructions...]"
 
 for bin in git zellij claude; do
   command -v "$bin" >/dev/null || die "'$bin' is not installed"
@@ -49,6 +55,7 @@ done
 
 prompt="/solve-ticket"
 [ -z "$key" ] || prompt="$prompt $key"
+[ -z "$plan" ] || prompt="$prompt $plan"
 [ -z "$instructions" ] || prompt="$prompt $instructions"
 
 # Escape for a KDL quoted string
