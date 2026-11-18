@@ -1,5 +1,9 @@
 # AGENTS
 
+@docs/ARCHITECTURE.md
+
+The architecture doc defines the stack, folder map and recipes. Follow it whenever a task lacks technical specification. AGENTS.md wins on conflict.
+
 ## Principles
 - Never implement features yourself when possible - use sub-agents!
 - Identify changes from the plan that can be implemented in parallel, and use sub-agents to implement the features efficiently
@@ -12,7 +16,7 @@ Use the Sonnet model for complex tasks (like coding) and mid-tier models for sim
 - No unnecessary `try/catch`. Avoid casting; use narrowing.
 - Named exports only (no default exports, except Next.js pages).
 - Absolute imports via `@/` unless same directory.
-- Follow existing ESLint setup; don't reformat unrelated code.
+- Follow existing Oxlint/Oxfmt (Ultracite) setup; don't reformat unrelated code.
 - Zod type-only: `import type * as z from 'zod';`.
 - Let compiler infer return types unless annotation adds clarity.
 - Options object for 3+ params, optional flags, or ambiguous args.
@@ -22,10 +26,10 @@ Use the Sonnet model for complex tasks (like coding) and mid-tier models for sim
 - Skip recaps unless the result is ambiguous or you need more input.
 
 ## Commands
-Only these `bun run` scripts: `build-local`, `lint`, `check:types`, `check:deps`, `check:i18n`, `test`, `test:e2e`.
+Only these `npm run` scripts: `build-local`, `lint`, `check:types`, `check:deps`, `check:i18n`, `test`, `test:e2e`.
 
 ## Git Commits
-Conventional Commits: `type: summary` without scope. The summary should be a short, specific sentence that explains what changed and where or why, not a vague phrase. Types: `feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert`. `BREAKING CHANGE:` footer when needed.
+Conventional Commits: `type: summary` without scope. The summary should be a short, specific sentence that explains what changed and where or why, not a vague phrase. Types: `feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert`. `BREAKING CHANGE:` footer when needed. When working on a Jira task, prefix with its key: `GRO-12 feat: summary`.
 
 ## Env
 All env vars validated in `Env.ts`; never read `process.env` directly.
