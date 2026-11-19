@@ -121,7 +121,7 @@ Rules for implementing tickets that contain only Figma designs and no technical 
 ### 4.5 Drizzle and Postgres
 
 - Schema only in `src/models/Schema.ts`. Pattern: `pgTable`, snake_case DB column names, camelCase TS keys, `createdAt`/`updatedAt` with `defaultNow()` and `$onUpdate` (see `counterSchema`).
-- Workflow after every schema change: `db:generate` then `db:migrate`; commit the generated `migrations/` files. Never `drizzle-kit push`; never edit generated SQL by hand.
+- Workflow after every schema change: `db:generate` then `db:migrate`; commit the generated `migrations/` files. Never `drizzle-kit push`; never edit generated SQL by hand. After a rebase on develop, drop your generated migration files and regenerate (`db:generate`, `db:migrate`); never hand-merge `migrations/**`.
 - Access the DB only from server code through `import { db } from '@/libs/DB'`. Never import it into a `'use client'` file.
 - Use Drizzle query builder / `eq`, `and` etc. Use `sql` template only for expressions the builder lacks (see `count + increment` in the counter route); never concatenate user input into SQL.
 - Use `db.transaction` for multi-statement writes that must be atomic. Add indexes and foreign keys for lookup/relationship columns; unique constraints for natural keys.
@@ -232,7 +232,7 @@ Open design questions:
 - Integration (`tests/integration/*.integ.ts`) for API/action behavior against the DB; E2E (`tests/e2e/*.e2e.ts`) for user flows, including a locale variant when copy matters (see `I18n.e2e.ts`). Visual regression runs through Chromatic (`Visual.e2e.ts`).
 - Write tests for new logic, validation, actions and each user-visible flow; skip tests that only restate markup. Naming rules in `AGENTS.md`.
 - Storybook: every new reusable component in `src/components` gets `<Name>.stories.tsx` (CSF3, `satisfies Meta<typeof X>`, `@storybook/nextjs-vite` types, `NextIntlClientProvider` decorator, `nextjs.appDirectory: false` parameter as in `BaseTemplate.stories.tsx`). Cover default, empty/long-content and error/disabled states. The a11y addon must show no violations.
-- Run `test` and `test:e2e` for changed areas; `storybook:test` is not an allowed agent script, so rely on `test` and `lint`.
+- Run `test` and `test:e2e` for changed areas; run `storybook:test` when stories change.
 
 ### 4.11 Performance and accessibility
 
@@ -298,7 +298,7 @@ Open design questions:
 - [ ] No `any`, casts, `console.*`, unused exports, or new env reads outside `Env.ts`.
 - [ ] Tests added/updated (unit, component, e2e as relevant); Storybook story for new reusable components.
 - [ ] Accessibility: semantic markup, labels, focus styles, contrast, keyboard use.
-- [ ] `lint`, `check:types`, `check:deps`, `check:i18n`, `test`, `build-local` pass; `test:e2e` for affected flows.
+- [ ] `lint`, `check:types`, `check:deps`, `check:i18n`, `test`, `build-local` pass; `storybook:test` when stories changed; `test:e2e` for affected flows.
 - [ ] Conventional commit message; PR notes list assumptions and any new dependency with justification.
 
 ## 7. Sources

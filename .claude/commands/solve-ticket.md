@@ -7,7 +7,7 @@ Solve the task described by **$ARGUMENTS** end-to-end, autonomously. Read and ob
 
 ## Role
 
-You are the **coordinator only**. Delegate all implementation, testing and fixing to Sonnet subagents (Agent tool, `model: "sonnet"`), in parallel when parts are independent (assign clear file ownership). Every subagent prompt must include the technical plan, the relevant `docs/ARCHITECTURE.md` sections/recipes, the `AGENTS.md` rules, the task context, Figma design context and the ports below. You run only git/gh/Jira/Figma/orchestration steps yourself.
+You are the **coordinator only**. Delegate implementation and fixes to `subagent_type: "developer"` and testing plus the Figma comparison to `subagent_type: "tester"` (project agents in `.claude/agents/`, Sonnet), in parallel when parts are independent (assign clear file ownership). Every subagent prompt must include the technical plan, the relevant `docs/ARCHITECTURE.md` sections/recipes, the `AGENTS.md` rules, the task context, Figma design context and the ports below. You run only git/gh/Jira/Figma/orchestration steps yourself.
 
 ## Arguments
 
@@ -38,21 +38,32 @@ Strip the flag `--plan` (anywhere) and remember it (plan-only mode, see Plan). I
 
    Rules: use only the stack from `ARCHITECTURE.md`; no new dependency unless unavoidable (justify it in the PR); list assumptions explicitly. Blocking ambiguity: ask the user and wait; otherwise proceed and record assumptions. Keep the plan in memory and pass it verbatim to every subagent; it goes into the PR body.
    - **Plan-only mode** (`--plan`): stop here. Print the plan, post it as a Jira comment if a key exists (prefixed "Proposed technical plan"), and wait for the user to approve or adjust in the session. On approval continue with the pipeline using the adjusted plan.
-4. **Implement**: spawn implementation subagent(s) following the plan. DB schema changes: drizzle generate + migrate, never push.
-5. **Test** (Sonnet subagents)
-   - Unit tests (`*.test.ts`, colocated) and Playwright e2e (`tests/*.e2e.ts`) per `AGENTS.md` test conventions; run `npm run test` and `npm run test:e2e`.
-   - If Figma screens exist: a subagent runs the app on the worktree port, captures Playwright screenshots of the relevant pages/states at the Figma frame viewport sizes, compares them with the Figma screenshots (layout, spacing, colors, typography, copy), fixes discrepancies and repeats until they match. It reports any remaining deviations.
-6. **Review**: spawn a fresh Sonnet subagent to review the diff against the plan, the `ARCHITECTURE.md` definition of done and `AGENTS.md`: wrong tech, missing i18n/validation/authz/tests, hard-coded strings/colors. Dispatch fixes to subagents for every finding.
-7. **Quality gate**: `npm run lint`, `npm run check:types`, `npm run check:i18n`, `npm run build-local` must all pass. Loop: subagent fixes, then recheck.
-8. **Commit and PR**
+4. **Implement**: spawn `developer` subagent(s) following the plan. DB schema changes: `npm run db:generate` then `npm run db:migrate`, never push.
+5. **Test** (`tester` subagent)
+   - Unit tests (`*.test.ts`, colocated), component tests, and Playwright e2e (`tests/e2e/*.e2e.ts`) / integration (`tests/integration/*.integ.ts`) per `AGENTS.md` test conventions; run `npm run test` and `npm run test:e2e`.
+   - **Figma check** (if Figma screens exist), per frame:
+     - Seed/fixture data so the rendered page shows the same content as the Figma frame. Capture Playwright screenshots at the exact Figma frame viewport size, with fonts loaded and animations disabled.
+     - Compare with the checklist: layout/spacing, colors (token names), typography (`text-*` utilities), copy, icons, states. Pass = no checklist item fails; sub-pixel/antialiasing differences are ignored.
+     - Hard cap: max 3 fix iterations (fixes delegated to `developer`). After that stop and list the remaining deviations.
+     - Fixes use existing tokens/utilities only; no arbitrary values (`w-[13px]`, `text-[#...]`) to force a match. If Figma uses a value with no token, add a token per `ARCHITECTURE.md` 4.8 or record it as a deviation.
+     - Save Figma vs implementation screenshots side by side under the gitignored `test-results/figma-check/` (never commit them) and report a table: frame, viewport, result, deviations.
+6. **Review**: spawn a fresh general-purpose Sonnet subagent (independent of `developer`/`tester`) to review the diff against the plan, the `ARCHITECTURE.md` definition of done and `AGENTS.md`: wrong tech, missing i18n/validation/authz/tests, hard-coded strings/colors. Dispatch fixes to `developer` for every finding.
+7. **Quality gate** (mirrors CI): `npm run lint`, `npm run check:types`, `npm run check:deps`, `npm run check:i18n`, `npm run test`, `npm run storybook:test` (if stories changed), `npm run build-local`, and `npm run test:e2e` for affected flows must all pass. Loop: `developer` fixes, then recheck. Do not open the PR until the gate passes.
+8. **Rebase on develop**: make local commits first (rebase needs a clean tree; message rules in step 9), then `git fetch origin develop`, then `git rebase origin/develop`. Conflict rules:
+   - `migrations/**` (SQL, `meta/_journal.json`, snapshots): never hand-merge. Take develop's versions (drop your generated migration files and journal/snapshot changes), keep your `src/models/Schema.ts` changes merged with develop's, then rerun `npm run db:generate` and `npm run db:migrate` for a fresh migration on top.
+   - `src/locales/*.json`: keep both sides' keys (union), valid JSON, then `npm run check:i18n`.
+   - `src/models/Schema.ts`: keep both sides' tables/columns.
+   - After the rebase, rerun the full quality gate. Push with `--force-with-lease`, only to your own feature branch.
+9. **Commit and PR**
    - Commit per `AGENTS.md` Conventional Commits; with a key it is the first word: `GRO-12 feat: add shopping list sharing` (without: `feat: ...`). Logical commits are fine. End each commit message with the attribution trailer the session harness specifies.
-   - `git push -u origin <branch>`, then `gh pr create --base develop`. Title uses the commit format. Body: summary, Jira link, what changed, **Technical plan & assumptions** (plan, assumptions, any new dependency with justification), tests, Figma check result (end with the harness-specified PR attribution line).
-9. **CI loop** (max 5 iterations): `gh pr checks <pr> --watch`. On failure, read `gh run view <id> --log-failed`, delegate the fix to a Sonnet subagent, rerun the local quality gate, commit (`<KEY> fix: ...`), push, repeat. After 5 iterations stop and report what still fails.
-10. **Jira** (with a key): add a comment with the PR link, 2-4 short bullets of what was done, and the CI status; transition to **In Review**. If CI fixes landed after the first comment, add an updated comment.
-11. **Report** briefly to the user: PR URL, branch, CI status, Jira updated or not, ports used.
+   - `git push -u origin <branch>`, then `gh pr create --base develop`. Title uses the commit format. Body: summary, Jira link, what changed, **Technical plan & assumptions** (plan, assumptions, any new dependency with justification), tests, **Figma check** section (the per-frame table and remaining deviations; end with the harness-specified PR attribution line).
+10. **CI loop** (max 5 iterations): `gh pr checks <pr> --watch`. On failure, read `gh run view <id> --log-failed`, delegate the fix to `developer`, rerun the local quality gate, commit (`<KEY> fix: ...`), push, repeat. After 5 iterations stop and report what still fails.
+11. **Jira** (with a key): add a comment with the PR link, 2-4 short bullets of what was done, and the CI status; transition to **In Review**. If CI fixes landed after the first comment, add an updated comment.
+12. **Report** briefly to the user: PR URL, branch, CI status, Jira updated or not, ports used.
 
 ## Guardrails
 
+- Guardrails are enforced by a PreToolUse hook (`scripts/ai/guard.sh`) and permission deny rules in `.claude/settings.json`. A blocked command means change approach; never work around it.
 - Never push to `develop` or `main`. Force-push only your own feature branch, and only when needed.
 - Never run `drizzle push`.
 - Never modify CI, or skip/disable tests, to make checks pass.
