@@ -28,7 +28,7 @@ if [[ "$ref" =~ ^[A-Z][A-Z0-9]+-[0-9]+$ ]]; then
   ref="$matches"
 fi
 
-pr_json="$(cd "$MAIN_REPO" && gh pr view "$ref" --json number,headRefName,title,state)" || die "PR '$ref' not found"
+pr_json="$(cd "$MAIN_REPO" && gh pr view "$ref" --json number,headRefName,title,state 2>/dev/null)" || die "PR '$ref' not found"
 number="$(printf '%s' "$pr_json" | jq -r .number)"
 branch="$(printf '%s' "$pr_json" | jq -r .headRefName)"
 title="$(printf '%s' "$pr_json" | jq -r .title)"
