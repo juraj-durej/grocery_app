@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { WelcomeSlides } from '@/components/WelcomeSlides';
 
 export async function generateMetadata(props: {
   params: Promise<{ locale: string }>;
@@ -16,11 +17,6 @@ export async function generateMetadata(props: {
 export default async function IndexPage(props: { params: Promise<{ locale: string }> }) {
   const { locale } = await props.params;
   setRequestLocale(locale);
-  const t = await getTranslations({ locale, namespace: 'IndexPage' });
 
-  return (
-    <main>
-      <h1>{t('title')}</h1>
-    </main>
-  );
+  return <WelcomeSlides />;
 }

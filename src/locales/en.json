@@ -2,6 +2,13 @@
   "IndexPage": {
     "meta_title": "Grocery app",
     "meta_description": "Grocery shopping app",
-    "title": "Hello World"
+    "slide_1_heading": "Welcome to",
+    "logo_alt": "BIG CART",
+    "slide_2_heading": "Buy Quality <br></br>Dairy Products",
+    "slide_3_heading": "Buy Premium <br></br>Quality Fruits",
+    "slide_4_heading": "Get Discounts <br></br>On All Products",
+    "slide_paragraph": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy",
+    "slides_label": "Welcome",
+    "slide_label": "{index} of {total}"
   }
 }
