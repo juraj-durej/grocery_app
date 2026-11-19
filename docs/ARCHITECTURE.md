@@ -17,7 +17,7 @@ Rules for implementing tickets that contain only Figma designs and no technical 
   - Logging: no `console.*` in app code (use LogTape).
   - Tests: no Jest, Cypress, React Testing Library.
   - Tooling: no ESLint/Prettier/Husky (project uses Oxlint/Oxfmt/Lefthook).
-- Demo boilerplate code (counter, portfolio, about, marketing layout, demo components, `BaseTemplate`) was removed in TASK-131. The app currently shows only a Hello World page.
+- Demo boilerplate code (counter, portfolio, about, marketing layout, demo components, `BaseTemplate`) was removed in TASK-131. The home page is the four-slide welcome carousel (`WelcomeSlides`, native CSS scroll-snap, no client JS).
 - `AppConfig.name` is still the placeholder `Nextjs Starter`. Do not hard-code the app name elsewhere; read `AppConfig`.
 - Unknown requirement or conflicting design: choose the simplest option consistent with this file, state the assumption in the PR.
 
@@ -50,7 +50,7 @@ Rules for implementing tickets that contain only Figma designs and no technical 
 ## 3. Folder map
 
 - `src/app/[locale]/` all UI routes. Root `layout.tsx` validates locale and provides `NextIntlClientProvider`.
-  - `page.tsx` home page (Hello World).
+  - `page.tsx` home page (`WelcomeSlides` carousel).
   - Add public pages as route groups (for example `(marketing)/`) and protected pages under `(auth)/dashboard/` (protected by `src/proxy.ts`).
   - Auth pages (sign in, sign up) are not implemented yet; the proxy redirects unauthenticated users to `/sign-in`. Create them under a new `(auth)`-style public route group when a ticket asks (see section 5, recipe 2).
 - `src/app/api/` route handlers, only for external consumers, webhooks or non-form HTTP clients. Not locale-prefixed.
@@ -156,6 +156,7 @@ Rules for implementing tickets that contain only Figma designs and no technical 
 - Tailwind is configured CSS-first in `src/styles/global.css` (`@import 'tailwindcss'`, layer order declared). There is no `tailwind.config.*`; do not create one. Theme variables are shadcn semantic CSS variables (`--background`, `--foreground`, `--primary`, `--muted`, `--border`, `--ring`, `--radius`, ...) declared in `:root` (and `.dark`) and exposed to Tailwind by `@theme inline` (`--color-primary: var(--primary)`). Extra tokens (brand scale, fonts, text sizes, spacing, breakpoints) go in `@theme { --color-brand-*, --font-*, --text-*, ... }`.
 - Tokens live in `src/styles/global.css`: shadcn semantic variables in `:root`, brand/text/typography tokens in `@theme`. For new Figma variables, read them with the Figma MCP `get_variable_defs`, map them to the semantic variable (`--primary`, ...) or add a token with a name mirroring Figma. Reuse existing tokens; never duplicate a value under a second name. See the token reference in 4.8.2.
 - Use token-backed utilities (`bg-brand-dark`, `text-title-md`). No arbitrary values (`w-[13px]`, `text-[#123456]`) when a token or scale step exists; if Figma has a one-off value, add a token or justify it in the PR.
+- Exception: welcome slide photo crops use commented arbitrary percentage classes (`-left-[48.55%]`) to reproduce the Figma crop boxes.
 - Existing demo components use the default Tailwind palette (`text-gray-700`, `bg-blue-500`). Do not copy those colors into new work; use Figma tokens.
 - Mobile-first: base classes for mobile, `sm: md: lg:` to scale up. Check at 375, 768 and 1280 px. No horizontal scroll.
 - Class names are static strings. For variants, use a typed lookup object; do not build classes dynamically (`bg-${x}`) because Tailwind cannot detect them. Prefer `gap`/`space-*` over margin hacks, `flex`/`grid` over absolute positioning, `rem`-based sizes.
@@ -177,7 +178,7 @@ Rules for implementing tickets that contain only Figma designs and no technical 
 
 ### 4.8.2 Design token reference
 
-Source: Figma GroceryApp, Colors and Typography frames. Font: Poppins via `next/font/google` (400, 500, 600), exposed as `--font-poppins` on `<html>` and used by `--font-sans` (Storybook falls back to the system sans stack).
+Source: Figma GroceryApp, Colors and Typography frames. Font: Poppins via `next/font/google` (400, 500, 600, 700), exposed as `--font-poppins` on `<html>` and used by `--font-sans` (Storybook falls back to the system sans stack).
 
 | Token (utility) | Value | Figma name |
 |---|---|---|
@@ -200,7 +201,7 @@ Source: Figma GroceryApp, Colors and Typography frames. Font: Poppins via `next/
 | `--border` / `--input` / `--ring` | #EBEBEB / #DADCE0 / #AEDC81 | Border / divider / primary |
 | `--radius` | 0.25rem | swatch corners |
 
-Typography utilities (`text-<style>`, include line height and weight): `title-sm` 15/20 600, `title-md` 20/25 600, `title-lg` 25/30 600, `title-xl` 30/36 600, `paragraph` 15/21 400, `paragraph-medium` 12/21 500, `label` 12/15 500.
+Typography utilities (`text-<style>`, include line height and weight): `title-sm` 15/20 600, `title-md` 20/25 600, `title-lg` 25/30 600, `title-xl` 30/36 600, `paragraph` 15/21 400, `paragraph-medium` 12/21 500, `label` 12/15 500, `heading-1` 30/1.3 700 (letter-spacing 3%), `paragraph-1` 15/normal 500 (letter-spacing 3%).
 
 Usage rules:
 - Components (shadcn primitives): semantic utilities (`bg-primary`, `text-muted-foreground`, `border-input`).
