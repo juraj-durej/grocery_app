@@ -71,7 +71,7 @@ Strip the flag `--plan` (anywhere) and remember it (plan-only mode, see Plan). I
 10. **CI loop** (max 5 iterations): `gh pr checks <pr> --watch`. On failure, read `gh run view <id> --log-failed`, delegate the fix to `developer`, rerun the local quality gate, commit (`<KEY> fix: ...`), push, repeat. After 5 iterations stop and report what still fails.
     - **Vercel preview**: once checks pass, wait for the Vercel deployment check (`gh pr checks`), read the preview URL (Vercel bot comment via `gh pr view --comments`, or `gh api repos/{owner}/{repo}/deployments` status `environment_url`). Run an e2e smoke test against it via `tester` (`PLAYWRIGHT_BASE_URL=<url>`; previews are public). Add the preview URL to the PR body (`gh pr edit`) and the Jira comment.
 11. **Jira** (with a key): add a comment with the PR link, 2-4 short bullets of what was done, and the CI status; transition to **In Review**. If CI fixes landed after the first comment, add an updated comment.
-12. **Report** briefly to the user: PR URL, branch, CI status, Jira updated or not, ports used.
+12. **Report** briefly to the user: PR URL, branch, CI status, Jira updated or not, ports used. If the PR later conflicts with or breaks after another merge into develop, the user runs `/fix-pr <PR>`.
 
 ## Guardrails
 
