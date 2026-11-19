@@ -9,6 +9,7 @@ The architecture doc defines the stack, folder map and recipes. Follow it whenev
 - Identify changes from the plan that can be implemented in parallel, and use sub-agents to implement the features efficiently
 - When using sub-agents to implement features, act as a coordinator only
 Use the Sonnet model for complex tasks (like coding) and mid-tier models for simpler tasks, like documentation
+- Project agents in `.claude/agents/`: `developer` (implementation) and `tester` (unit/component/e2e tests and Figma visual check); delegate to them.
 - After completing features (large or small), always run commands like lint, type check and next build to check code quality
 - Clarity and consistency over cleverness. Minimal changes. Match existing patterns.
 - Keep components/functions short; break down when it improves structure.
@@ -26,7 +27,7 @@ Use the Sonnet model for complex tasks (like coding) and mid-tier models for sim
 - Skip recaps unless the result is ambiguous or you need more input.
 
 ## Commands
-Only these `npm run` scripts: `build-local`, `lint`, `check:types`, `check:deps`, `check:i18n`, `test`, `test:e2e`.
+Only these `npm run` scripts: `build-local`, `lint`, `check:types`, `check:deps`, `check:i18n`, `test`, `test:e2e`, `db:generate`, `db:migrate`, `storybook:test`.
 
 ## Git Commits
 Conventional Commits: `type: summary` without scope. The summary should be a short, specific sentence that explains what changed and where or why, not a vague phrase. Types: `feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert`. `BREAKING CHANGE:` footer when needed. When working on a Jira task, prefix with its key: `GRO-12 feat: summary`.
@@ -63,12 +64,13 @@ All env vars validated in `Env.ts`; never read `process.env` directly.
 - Order: description → `@param` → `@returns` → `@throws` (only if it can throw).
 
 ## DB
-- Whenever you make changes to the database schema, ALWAYS run the drizzle generate and migrate commands
+- Whenever you make changes to the database schema, ALWAYS run `npm run db:generate` then `npm run db:migrate`
+- After rebasing on develop, never hand-merge `migrations/**`: take develop's versions, keep your `Schema.ts` changes, and regenerate with `db:generate` and `db:migrate`
 - NEVER run drizzle push!
 
 ## Tests
 - `*.test.ts` for unit tests; `*.integ.ts` for integration tests; `*.e2e.ts` for Playwright tests.
-- `*.test.ts` co-located with implementation; `*.integ.ts` and `*.e2e.ts` in `tests/` directory.
+- `*.test.ts` co-located with implementation; `*.integ.ts` in `tests/integration/`; `*.e2e.ts` in `tests/e2e/`.
 - Top `describe` = subject; nested `describe` to group scenarios or contexts.
 - `it` titles: short, third-person present, `verb + object + context`. Sentence case, no period.
 - Omit "should/works/handles/checks/validates". State what, not how.
