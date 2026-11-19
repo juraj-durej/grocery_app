@@ -12,7 +12,9 @@ test.describe('Sanity', () => {
     test('displays the homepage', async ({ page }) => {
       await page.goto('/');
 
-      await expect(page.getByRole('heading', { name: 'Hello World' })).toBeVisible();
+      await expect(
+        page.getByRole('heading', { level: 1, name: 'Welcome to BIG CART' }),
+      ).toBeVisible();
     });
   });
 });

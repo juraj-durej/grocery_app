@@ -5,7 +5,9 @@ test.describe('Visual testing', () => {
     test('takes a screenshot of the homepage', async ({ page }, testInfo) => {
       await page.goto('/');
 
-      await expect(page.getByRole('heading', { name: 'Hello World' })).toBeVisible();
+      await expect(
+        page.getByRole('heading', { level: 1, name: 'Welcome to BIG CART' }),
+      ).toBeVisible();
 
       await takeSnapshot(page, testInfo);
     });
