@@ -250,7 +250,7 @@ Open design questions:
 - Vercel sets `DB_MODE=pglite`: each function instance runs an in-memory PGlite, migrated and seeded at start. Data resets on cold start and is not shared between instances: fine for click-through verification, not for persistence.
 - Vercel runs the `vercel-build` script (`next build`); `build` runs `db:migrate` against `DATABASE_URL`, which does not exist there.
 - `getBaseUrl()` falls back to the `NEXT_PUBLIC_VERCEL_*` variables when `NEXT_PUBLIC_APP_URL` is unset.
-- Preview URLs are behind Vercel Authentication. For automation set `PLAYWRIGHT_BASE_URL=<preview url>` and `VERCEL_AUTOMATION_BYPASS_SECRET`; Playwright then skips the local `webServer` and sends the bypass headers.
+- Preview and production URLs are public (Vercel Authentication is off). For automation set `PLAYWRIGHT_BASE_URL=<preview url>`; Playwright then skips the local `webServer`. If protection is re-enabled, also set `VERCEL_AUTOMATION_BYPASS_SECRET` and Playwright sends the bypass headers.
 
 ## 5. Recipes
 
