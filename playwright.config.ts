@@ -9,7 +9,12 @@ const PORT = process.env.PORT ?? '3008';
 const DB_PORT = process.env.DB_PORT ?? '5432';
 
 // Set webServer.url and use.baseURL with the location of the WebServer respecting the correct set port
-const baseURL = `http://localhost:${PORT}`;
+const localBaseURL = `http://localhost:${PORT}`;
+
+// Run against a deployed (e.g. Vercel preview) URL instead of a local server
+const remoteBaseURL = process.env.PLAYWRIGHT_BASE_URL;
+const baseURL = remoteBaseURL ?? localBaseURL;
+const bypassSecret = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -32,27 +37,39 @@ export default defineConfig<ChromaticConfig>({
 
   // Run your local dev server before starting the tests:
   // https://playwright.dev/docs/test-advanced#launching-a-development-web-server-during-the-tests
-  webServer: {
-    command: process.env.CI
-      ? `pglite-server -m 100 --port=${DB_PORT} --run 'run-s db:migrate start'`
-      : `pglite-server -m 100 --port=${DB_PORT} --run 'run-s db:migrate dev:next'`,
-    url: baseURL,
-    timeout: 60 * 1000,
-    reuseExistingServer: !process.env.CI,
-    gracefulShutdown: { signal: 'SIGTERM', timeout: 2 * 1000 },
-    env: {
-      BROWSER_TO_TERMINAL_DISABLED: 'true',
-      NEXT_PUBLIC_SENTRY_DISABLED: 'true',
-      NEXT_PUBLIC_APP_URL: baseURL,
-      PORT,
-    },
-  },
+  webServer: remoteBaseURL
+    ? undefined
+    : {
+        command: process.env.CI
+          ? `pglite-server -m 100 --port=${DB_PORT} --run 'run-s db:migrate start'`
+          : `pglite-server -m 100 --port=${DB_PORT} --run 'run-s db:migrate dev:next'`,
+        url: localBaseURL,
+        timeout: 60 * 1000,
+        reuseExistingServer: !process.env.CI,
+        gracefulShutdown: { signal: 'SIGTERM', timeout: 2 * 1000 },
+        env: {
+          BROWSER_TO_TERMINAL_DISABLED: 'true',
+          NEXT_PUBLIC_SENTRY_DISABLED: 'true',
+          NEXT_PUBLIC_APP_URL: localBaseURL,
+          PORT,
+        },
+      },
 
   // Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions.
   use: {
     // Use baseURL so to make navigations relative.
     // More information: https://playwright.dev/docs/api/class-testoptions#test-options-base-url
     baseURL,
+
+    // Bypass Vercel Deployment Protection on preview URLs
+    ...(remoteBaseURL && bypassSecret
+      ? {
+          extraHTTPHeaders: {
+            'x-vercel-protection-bypass': bypassSecret,
+            'x-vercel-set-bypass-cookie': 'true',
+          },
+        }
+      : {}),
 
     // Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer
     trace: process.env.CI ? 'on' : 'retain-on-failure',

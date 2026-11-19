@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm';
 import { getTranslations } from 'next-intl/server';
 import { headers } from 'next/headers';
-import { db } from '@/libs/DB';
+import { db, ensureDbReady } from '@/libs/DB';
 import { logger } from '@/libs/Logger';
 import { counterSchema } from '@/models/Schema';
 
@@ -12,6 +12,7 @@ export const CurrentCount = async () => {
   // The default value is 0 when there is no `x-e2e-random-id` header
   const headersList = await headers();
   const id = Number(headersList.get('x-e2e-random-id')) || 0;
+  await ensureDbReady();
   const result = await db.query.counterSchema.findFirst({
     where: eq(counterSchema.id, id),
   });

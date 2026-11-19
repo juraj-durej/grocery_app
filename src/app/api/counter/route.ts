@@ -2,7 +2,7 @@ import { sql } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import * as z from 'zod';
-import { db } from '@/libs/DB';
+import { db, ensureDbReady } from '@/libs/DB';
 import { logger } from '@/libs/Logger';
 import { counterSchema } from '@/models/Schema';
 import { CounterValidation } from '@/validations/CounterValidation';
@@ -19,6 +19,8 @@ export const PUT = async (request: Request) => {
   // The default value is 0 when there is no `x-e2e-random-id` header
   const headersList = await headers();
   const id = Number(headersList.get('x-e2e-random-id')) || 0;
+
+  await ensureDbReady();
 
   const count = await db
     .insert(counterSchema)

@@ -30,7 +30,7 @@ Rules for implementing tickets that contain only Figma designs and no technical 
 | Language | TypeScript 7, strict | `tsconfig.json` | `@/*` imports; no `any` |
 | Styling | Tailwind CSS 4.3 (CSS-first) | `src/styles/global.css` | Utilities only; shadcn semantic CSS variables in `:root`/`.dark` mapped via `@theme inline` |
 | Auth | Supabase Auth via `@supabase/ssr` 0.12 | `src/libs/SupabaseServer.ts`, `src/proxy.ts`, `src/actions/AuthActions.ts` | `getUser()` for authorization, never `getSession()` |
-| Database | Postgres + Drizzle ORM 0.45 / drizzle-kit 0.31 (`pg`); PGlite locally | `src/models/Schema.ts`, `src/libs/DB.ts`, `src/utils/DBConnection.ts`, `migrations/` | Server-only; generate + migrate, never push |
+| Database | Postgres + Drizzle ORM 0.45 / drizzle-kit 0.31 (`pg`); PGlite locally (socket) or in-process in-memory PGlite (`DB_MODE=pglite`, Vercel) | `src/models/Schema.ts`, `src/models/Seed.ts`, `src/libs/DB.ts`, `src/utils/DBConnection.ts`, `migrations/` | Server-only; generate + migrate, never push |
 | Validation | Zod 4.4 | `src/validations` | One schema shared by client and server |
 | Component library | shadcn/ui 4.23 CLI (style `radix-vega`, `radix-ui` 1.8 primitives, `class-variance-authority` 0.7, `tailwind-merge` 3.7 + `clsx` 2.1 via `cn`, `tw-animate-css`) | `src/components/ui`, `components.json`, `src/utils/Cn.ts` | Generated primitives; compose, do not rebuild; variants via CVA |
 | Icons | lucide-react 1.75 | imported where used | Only icon library |
@@ -60,7 +60,7 @@ Rules for implementing tickets that contain only Figma designs and no technical 
 - `src/components/` app components composed from `ui/` primitives, one component per PascalCase file (`LocaleSwitcher.tsx`). Subfolders only when a component has parts.
 - `src/templates/` page-level shells composed from components (`BaseTemplate.tsx`).
 - `src/libs/` third-party wiring and singletons (`DB.ts`, `Env.ts`, `Logger.ts`, `Arcjet.ts`, `SupabaseServer.ts`, `I18n*.ts`). PascalCase files.
-- `src/models/Schema.ts` the single Drizzle schema file.
+- `src/models/Schema.ts` the single Drizzle schema file; `src/models/Seed.ts` deterministic seed data for every table.
 - `src/validations/<Name>Validation.ts` Zod schemas, exported as `<Name>Validation`.
 - `src/utils/` pure helpers and config (`AppConfig.ts`, `Helpers.ts`, `DBConnection.ts`, `Cn.ts` with `cn()`).
 - `src/types/` shared types (`I18n.ts`).
@@ -127,6 +127,8 @@ Rules for implementing tickets that contain only Figma designs and no technical 
 - Use `db.transaction` for multi-statement writes that must be atomic. Add indexes and foreign keys for lookup/relationship columns; unique constraints for natural keys.
 - Select only needed columns; paginate lists; avoid N+1 by joining.
 - Local DB is PGlite (`db-server:file`, started by `dev`); production is Postgres through `DATABASE_URL`. Write portable Postgres only.
+- `DB_MODE` (`postgres` default, or `pglite`) selects the driver in `DBConnection.ts`. `pglite` creates an in-memory PGlite in the server process, runs the migrations and `seedDatabase` (`src/models/Seed.ts`) once per instance; `ensureDbReady()` from `@/libs/DB` resolves when done (awaited in `instrumentation.ts` `register()` and before queries). `DATABASE_URL` is required only for `postgres`.
+- Every new table gets deterministic, idempotent, hand-written seed data in `src/models/Seed.ts` in the same PR (no faker).
 - Enable Supabase RLS only if tables are exposed to supabase-js; with Drizzle server access, enforce ownership in queries.
 
 ### 4.6 Zod 4 and react-hook-form
@@ -242,6 +244,14 @@ Open design questions:
 - No premature memoization (React Compiler handles it). Do not add `useMemo`, `useCallback`, `React.memo`.
 - Accessibility rules from 4.8 apply to every ticket; verify keyboard navigation and focus order manually.
 
+### 4.12 Deployment (Vercel)
+
+- `develop` is Vercel production; `main` is ignored; every PR branch gets a preview deployment.
+- Vercel sets `DB_MODE=pglite`: each function instance runs an in-memory PGlite, migrated and seeded at start. Data resets on cold start and is not shared between instances: fine for click-through verification, not for persistence.
+- Vercel runs the `vercel-build` script (`next build`); `build` runs `db:migrate` against `DATABASE_URL`, which does not exist there.
+- `getBaseUrl()` falls back to the `NEXT_PUBLIC_VERCEL_*` variables when `NEXT_PUBLIC_APP_URL` is unset.
+- Preview and production URLs are public (Vercel Authentication is off). For automation set `PLAYWRIGHT_BASE_URL=<preview url>`; Playwright then skips the local `webServer`. If protection is re-enabled, also set `VERCEL_AUTOMATION_BYPASS_SECRET` and Playwright sends the bypass headers.
+
 ## 5. Recipes
 
 ### 5.1 Add a public page
@@ -266,8 +276,9 @@ Open design questions:
 ### 5.4 Add a DB table or column
 1. Edit `src/models/Schema.ts` (follow `counterSchema`).
 2. `db:generate`, review the SQL in `migrations/`, then `db:migrate`.
-3. Add a Zod schema if it receives input; query only from server code via `@/libs/DB`.
-4. Add an integration test (`tests/integration`).
+3. Add deterministic seed data to `src/models/Seed.ts`.
+4. Add a Zod schema if it receives input; query only from server code via `@/libs/DB`.
+5. Add an integration test (`tests/integration`).
 
 ### 5.5 Add translations
 1. Add keys to `src/locales/en.json` under the right namespace, then the same keys to `fr.json`.
@@ -294,7 +305,7 @@ Open design questions:
 - [ ] Uses existing components and tokens; Figma components mapped to shadcn primitives (added via CLI, `cn()`, variants, no hand-copied or duplicated primitives); no arbitrary values or demo content copied.
 - [ ] No hard-coded strings; keys in all locales; `check:i18n` passes.
 - [ ] Inputs validated with Zod on the server; every action/handler checks `getUser()`.
-- [ ] Schema changes have generated and applied migrations (no push).
+- [ ] Schema changes have generated and applied migrations (no push) and seed data in `src/models/Seed.ts`.
 - [ ] No `any`, casts, `console.*`, unused exports, or new env reads outside `Env.ts`.
 - [ ] Tests added/updated (unit, component, e2e as relevant); Storybook story for new reusable components.
 - [ ] Accessibility: semantic markup, labels, focus styles, contrast, keyboard use.

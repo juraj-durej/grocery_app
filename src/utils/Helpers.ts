@@ -3,11 +3,26 @@ import { routing } from '@/libs/I18nRouting';
 
 /**
  * Resolves the public base URL of the application.
- * @returns The configured public app URL or the local development URL.
+ * @returns The configured public app URL, the Vercel deployment URL or the local development URL.
  */
 export const getBaseUrl = () => {
   if (Env.NEXT_PUBLIC_APP_URL) {
     return Env.NEXT_PUBLIC_APP_URL;
+  }
+
+  if (
+    Env.NEXT_PUBLIC_VERCEL_ENV === 'production' &&
+    Env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL
+  ) {
+    return `https://${Env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL}`;
+  }
+
+  if (Env.NEXT_PUBLIC_VERCEL_BRANCH_URL) {
+    return `https://${Env.NEXT_PUBLIC_VERCEL_BRANCH_URL}`;
+  }
+
+  if (Env.NEXT_PUBLIC_VERCEL_URL) {
+    return `https://${Env.NEXT_PUBLIC_VERCEL_URL}`;
   }
 
   return 'http://localhost:3000';

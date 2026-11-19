@@ -26,7 +26,13 @@ const sentryOptions: Sentry.NodeOptions | Sentry.EdgeOptions = {
   debug: false,
 };
 
-export function register() {
+export async function register() {
+  if (process.env.NEXT_RUNTIME === 'nodejs' && process.env.DB_MODE === 'pglite') {
+    // Migrate and seed the in-memory database before the instance serves traffic
+    const { ensureDbReady } = await import('@/libs/DB');
+    await ensureDbReady();
+  }
+
   if (!process.env.NEXT_PUBLIC_SENTRY_DISABLED) {
     if (process.env.NEXT_RUNTIME === 'nodejs') {
       // Node.js Sentry configuration
