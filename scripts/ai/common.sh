@@ -25,7 +25,8 @@ open_task_tab() {
 
   _ai_layout_dir="$(mktemp -d)"
   trap 'rm -rf "$_ai_layout_dir"' EXIT
-  printf 'layout {\ntab name="%s" cwd="%s" {\n  pane command="%s" close_on_exit=false {\n    args%s\n  }\n}\n}\n' \
+  # default_tab_template keeps Zellij's tab bar (top) and status bar (bottom), as in the default layout
+  printf 'layout {\ndefault_tab_template {\n  pane size=1 borderless=true {\n    plugin location="zellij:tab-bar"\n  }\n  children\n  pane size=2 borderless=true {\n    plugin location="zellij:status-bar"\n  }\n}\ntab name="%s" cwd="%s" {\n  pane command="%s" close_on_exit=false {\n    args%s\n  }\n}\n}\n' \
     "$(kdl "$tab")" "$(kdl "$cwd")" "$(kdl "$claude_bin")" "$kdl_args" > "$_ai_layout_dir/task.kdl"
 
   if [ -n "${ZELLIJ:-}" ]; then
