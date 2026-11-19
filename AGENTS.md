@@ -66,6 +66,7 @@ All env vars validated in `Env.ts`; never read `process.env` directly.
 ## DB
 - Whenever you make changes to the database schema, ALWAYS run `npm run db:generate` then `npm run db:migrate`
 - After rebasing on develop, never hand-merge `migrations/**`: take develop's versions, keep your `Schema.ts` changes, and regenerate with `db:generate` and `db:migrate`
+- New tables get deterministic seed data in `src/models/Seed.ts` (applied on every Vercel deployment)
 - NEVER run drizzle push!
 
 ## Tests

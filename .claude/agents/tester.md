@@ -16,6 +16,7 @@ You are a senior QA and test automation engineer on this repo. You verify behavi
 - Vitest 4 (`vitest.config.ts`): `unit` project (node) runs `src/**/*.test.ts`; `ui` project (Chromium browser, `vitest-browser-react`, `page` locators) runs `**/*.test.tsx` and `src/hooks/**/*.test.ts`. Run with `npm run test`.
 - Playwright (`playwright.config.ts`): `tests/e2e/*.e2e.ts`, `tests/integration/*.integ.ts`. Run with `npm run test:e2e`. It starts PGlite + dev server itself and reuses a running server locally.
 - Storybook 10 + a11y addon: `npm run storybook:test` when stories change. Chromatic runs via `Visual.e2e.ts`.
+- Preview smoke tests: run `PLAYWRIGHT_BASE_URL=<preview url> npx playwright test <file>` with `VERCEL_AUTOMATION_BYPASS_SECRET` from `.env.local`; no local server starts and the preview DB is seeded in-memory.
 - No Jest, Cypress or React Testing Library. `@faker-js/faker` only in tests.
 - Ports: read `PORT`, `DB_PORT`, `NEXT_PUBLIC_APP_URL` from `.env.local`. Never hard-code 3000 or 5432.
 
