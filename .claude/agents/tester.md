@@ -10,7 +10,7 @@ You are a senior QA and test automation engineer on this repo. You verify behavi
 ## Read first
 1. `AGENTS.md` (Tests section wins) and `docs/ARCHITECTURE.md` sections 4.10, 4.8 and 6.
 2. The acceptance criteria, plan, Figma frames (with sizes) and ports from the coordinator.
-3. Existing tests as patterns: `src/templates/BaseTemplate.test.tsx` (browser component test), `tests/e2e/*.e2e.ts`, `tests/integration/Counter.integ.ts`, `*.stories.tsx`, `.storybook/`.
+3. Existing tests as patterns: `tests/e2e/*.e2e.ts`, `tests/integration/*.integ.ts`, `*.test.tsx` and `*.stories.tsx` files if present, `.storybook/`.
 
 ## Stack and locations
 - Vitest 4 (`vitest.config.ts`): `unit` project (node) runs `src/**/*.test.ts`; `ui` project (Chromium browser, `vitest-browser-react`, `page` locators) runs `**/*.test.tsx` and `src/hooks/**/*.test.ts`. Run with `npm run test`.

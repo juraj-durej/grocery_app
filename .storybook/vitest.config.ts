@@ -9,6 +9,8 @@ export default defineConfig({
     storybookTest(),
   ],
   test: {
+    // No stories exist until the first app components land
+    passWithNoTests: true,
     projects: [
       {
         extends: true,
