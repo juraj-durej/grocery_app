@@ -2,7 +2,7 @@ import type { PgDatabase, PgQueryResultHKT } from 'drizzle-orm/pg-core';
 import type * as schema from '@/models/Schema';
 
 /**
- * Seeds the database with deterministic, hand-written demo data.
+ * Seeds the database with deterministic, hand-written seed data.
  *
  * Rule: every new table gets realistic seed data here in the same PR.
  * Seeding must stay idempotent (insert-if-empty or `onConflictDoNothing`) because it runs on every

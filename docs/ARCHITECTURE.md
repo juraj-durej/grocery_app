@@ -264,7 +264,7 @@ Open design questions:
 ### 5.2 Add a protected dashboard page
 1. Create `src/app/[locale]/(auth)/dashboard/<route>/page.tsx`. The proxy already guards `/dashboard/*`; no metadata in the page (layout owns it).
 2. In the page, call `createSupabaseServerClient().auth.getUser()` when you need the user; scope all queries by `user.id`.
-3. Add a nav entry in `dashboard/layout.tsx` with a translated label.
+3. When a dashboard layout exists, add a nav entry in `dashboard/layout.tsx` with a translated label (create the layout with the dashboard metadata if it does not exist yet).
 4. Sign-in/sign-up pages do not exist yet. When a ticket needs them, create them as public pages (for example `src/app/[locale]/(marketing)/sign-in/page.tsx`; `/sign-in` is the proxy's redirect target and must not be under `/dashboard`) with actions in `AuthActions.ts`.
 
 ### 5.3 Add a form with a server action
