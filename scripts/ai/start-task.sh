@@ -3,8 +3,9 @@
 # (`claude --worktree`) with the /solve-ticket command.
 #
 # Usage: scripts/ai/start-task.sh [--plan] [JIRA-KEY] [instructions...]
-#   --plan (optional, first) stops /solve-ticket after the technical plan for approval.
+#   --plan (optional, anywhere) stops /solve-ticket after the technical plan for approval.
 #   KEY is the first argument when it looks like GRO-12; everything else is free-text instructions.
+#   Tab name: "GRO-12" (the agent renames it to "GRO-12 <short title>") or a short title from the instructions.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -15,10 +16,11 @@ case "${1:-}" in -h|--help) sed -n "2,7p" "$0"; exit 0 ;; esac
 [ "$#" -gt 0 ] || die "Usage: $0 [--plan] [JIRA-KEY] [instructions...]"
 
 plan=""
-if [ "$1" = "--plan" ]; then
-  plan="--plan"
-  shift
-fi
+args=()
+for arg in "$@"; do
+  if [ "$arg" = "--plan" ]; then plan="--plan"; else args+=("$arg"); fi
+done
+set -- ${args[@]+"${args[@]}"}
 key=""
 if [ "$#" -gt 0 ] && [[ "$1" =~ ^[A-Z][A-Z0-9]+-[0-9]+$ ]]; then
   key="$1"
@@ -43,7 +45,8 @@ else
   words="$(printf '%s' "$instructions" | tr '\n\r\t' '   ' | awk '{ for (i = 1; i <= 4 && i <= NF; i++) printf "%s%s", $i, (i < 4 && i < NF ? " " : "") }')"
   base="task-$(slugify "$words" | cut -c1-30 | sed -E 's/-+$//')"
   [ "$base" != "task-" ] || base="task"
-  tab="$(printf '%s' "$instructions" | tr '\n\r\t' '   ' | cut -c1-25 | sed -E 's/ +$//')"
+  tab="$(printf '%s' "$words" | cut -c1-25 | sed -E 's/ +$//')"
+  [ -n "$tab" ] || tab="task"
 fi
 
 name="$base"
@@ -92,6 +95,9 @@ else
   zellij delete-session --force "$session" >/dev/null 2>&1 || true
   zellij attach --create-background "$session" options --default-layout "$layout_dir/task.kdl"
   info "Created Zellij session '$session'"
-  open -na Ghostty --args -e zellij attach "$session"
+  if [ -t 0 ] && [ -t 1 ]; then
+    exec zellij attach "$session"
+  fi
+  echo "  Attach:  zellij attach $session"
 fi
 echo "  Switch tabs:  Ctrl-t (tab mode: h/l or arrows)  |  Alt-h / Alt-l  |  Ctrl-o d (detach)"

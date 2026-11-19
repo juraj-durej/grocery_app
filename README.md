@@ -420,15 +420,13 @@ scripts/ai/start-task.sh GRO-12 focus on the API     # ticket + extra instructio
 scripts/ai/start-task.sh add a shopping list page    # free-text instructions only
 ```
 
-The same is available in Claude Code as `/start-task [KEY] [instructions]`. The script opens the tab in the current Zellij session, or creates the `ai-tasks` session (override with `AI_ZELLIJ_SESSION`) and opens it in Ghostty. The agent renames its tab with `scripts/ai/rename-tab.sh "<name>"`.
+The same is available in Claude Code as `/start-task [--plan] [KEY] [instructions]`; `/solve-ticket` with the same arguments, run from the main repo, also hands off to a new tab. The script opens the tab in the current Zellij session, or creates the `ai-tasks` session (override with `AI_ZELLIJ_SESSION`) and attaches to it in the current terminal (or prints `zellij attach ai-tasks`). The tab is named `GRO-12 Short title` (the agent renames it with `scripts/ai/rename-tab.sh` after reading the ticket) or, without a key, a short title from the instructions.
+
+Before implementing, the agent checks the ticket, instructions and Figma for inconsistencies or unclear points and asks you short yes/no questions in its tab. If everything is clear, it starts right away.
 
 Every worktree gets its own ports automatically (SessionStart hook runs `scripts/ai/setup-worktree.sh`): app port from 3100 up, PGlite database port from 5500 up, written with `DATABASE_URL` and `NEXT_PUBLIC_APP_URL` to the worktree's `.env.local`. `npm run dev`, `build-local` and `test:e2e` pick them up, so several tasks can run at once. The main working tree keeps 3000 / 5432. Allocations are stored in `.git/ai-ports`.
 
-Prerequisites: `git`, Node 24 and npm, `claude`, `zellij`, `jq`, Ghostty and the GitHub CLI (`brew install gh && gh auth login`). Jira and Figma are used through Claude's MCP connectors. Check the setup with `scripts/ai/doctor.sh`. Commits may start with the Jira key, e.g. `GRO-12 feat: add shopping list`.
-
-### Contributions
-
-Everyone is welcome to contribute to this project. Feel free to open an issue if you have any questions or find a bug. Totally open to suggestions and improvements.
+Prerequisites: `git`, Node 24 and npm, `claude`, `zellij`, `jq` and the GitHub CLI (`brew install gh && gh auth login`). Jira and Figma are used through Claude's MCP connectors. Check the setup with `scripts/ai/doctor.sh`. Commits may start with the Jira key, e.g. `GRO-12 feat: add shopping list`.
 
 ### License
 

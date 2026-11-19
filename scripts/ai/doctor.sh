@@ -21,7 +21,6 @@ check "claude installed" command -v claude
 check "zellij installed (brew install zellij)" command -v zellij
 check "jq installed (brew install jq)" command -v jq
 check "lsof installed" command -v lsof
-check "Ghostty installed (brew install --cask ghostty)" test -d /Applications/Ghostty.app -o -d "$HOME/Applications/Ghostty.app"
 
 echo "GitHub"
 if command -v gh >/dev/null; then
