@@ -422,6 +422,8 @@ scripts/ai/start-task.sh add a shopping list page    # free-text instructions on
 
 The same is available in Claude Code as `/start-task [--plan] [KEY] [instructions]`; `/solve-ticket` with the same arguments, run from the main repo, also hands off to a new tab. The script opens the tab in the current Zellij session, or creates the `ai-tasks` session (override with `AI_ZELLIJ_SESSION`) and attaches to it in the current terminal (or prints `zellij attach ai-tasks`). The tab is named `GRO-12 Short title` (the agent renames it with `scripts/ai/rename-tab.sh` after reading the ticket) or, without a key, a short title from the instructions.
 
+When a PR conflicts or breaks after another PR was merged into develop (GitHub requires branches to be up to date before merging), run `/fix-pr <PR number | GRO-12>` (or `scripts/ai/fix-pr.sh`). It opens a tab in the PR's worktree (or a new one), rebases on develop, resolves conflicts keeping both features, reruns the full quality gate and e2e, pushes and comments on the PR and Jira. Add instructions after the PR to address review feedback.
+
 Before implementing, the agent checks the ticket, instructions and Figma for inconsistencies or unclear points and asks you short yes/no questions in its tab. If everything is clear, it starts right away.
 
 Every worktree gets its own ports automatically (SessionStart hook runs `scripts/ai/setup-worktree.sh`): app port from 3100 up, PGlite database port from 5500 up, written with `DATABASE_URL` and `NEXT_PUBLIC_APP_URL` to the worktree's `.env.local`. `npm run dev`, `build-local` and `test:e2e` pick them up, so several tasks can run at once. The main working tree keeps 3000 / 5432. Allocations are stored in `.git/ai-ports`.
