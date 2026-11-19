@@ -1,7 +1,14 @@
 ---
 description: Implement a Jira ticket and/or instructions end-to-end (code, tests, Figma check, PR, CI, Jira update)
-argument-hint: [JIRA-KEY] [--plan] [instructions]
+argument-hint: [--plan] [JIRA-KEY] [instructions]
+allowed-tools: Bash(scripts/ai/start-task.sh:*)
 ---
+
+## Step 0: own Zellij tab
+
+Every task runs in its own Zellij tab and worktree. Check `git rev-parse --show-toplevel`:
+- Not under `.claude/worktrees/` (you were started in the main repo): run `scripts/ai/start-task.sh $ARGUMENTS`, report the new tab and worktree in one line, and **stop**. The agent in the new tab does the work.
+- Under `.claude/worktrees/`: continue below.
 
 Solve the task described by **$ARGUMENTS** end-to-end, autonomously. Read and obey `AGENTS.md` strictly.
 
@@ -24,7 +31,7 @@ Strip the flag `--plan` (anywhere) and remember it (plan-only mode, see Plan). I
 
 1. **Context**
    - With a key: fetch the issue (summary, description, acceptance criteria, comments, attachments, links), transition it to **In Progress**, collect Figma URLs (description, comments, remote links), then fetch Figma screenshots and design context for each frame (keep frame sizes).
-   - Run `scripts/ai/rename-tab.sh "<KEY> <short title>"` (without a key: a short summary of the instructions).
+   - Name the tab right away with `scripts/ai/rename-tab.sh "<name>"`, max 30 chars: with a key `<KEY> <short title>` (2-4 words from the Jira summary, e.g. `GRO-12 Shopping list`); without a key a 2-4 word title of the instructions (e.g. `Category filter`).
 2. **Sync**: `git fetch origin develop`, ensure the tree is clean, then create the branch from `origin/develop`: `git switch -c <branch> origin/develop` (or `git branch -m` the worktree's auto branch after resetting it to `origin/develop`). Name: `feat/<key-lowercase>-<slug>` or `fix/<key-lowercase>-<slug>`; without a key `feat/<slug>`.
 3. **Plan (technical design)**: Jira tickets often hold only Figma designs and no spec, so design it yourself. Read `docs/ARCHITECTURE.md` and map the ticket + Figma screens to:
    - routes/pages (public vs protected)
@@ -36,7 +43,11 @@ Strip the flag `--plan` (anywhere) and remember it (plan-only mode, see Plan). I
    - design tokens to use/add
    - tests to write
 
-   Rules: use only the stack from `ARCHITECTURE.md`; no new dependency unless unavoidable (justify it in the PR); list assumptions explicitly. Blocking ambiguity: ask the user and wait; otherwise proceed and record assumptions. Keep the plan in memory and pass it verbatim to every subagent; it goes into the PR body.
+   Rules: use only the stack from `ARCHITECTURE.md`; no new dependency unless unavoidable (justify it in the PR); list assumptions explicitly. Keep the plan in memory and pass it verbatim to every subagent; it goes into the PR body.
+   - **Clarify before implementing** (always, also in plan-only mode): compare the ticket, comments, instructions and every Figma frame and list everything inconsistent or unclear, for example ticket vs Figma differences, frames that disagree, missing states (empty, error, loading), missing mobile frames, unclear behavior, data or permissions, copy without a translation source, or a requirement that conflicts with `ARCHITECTURE.md`.
+     - If there is anything, ask the user with the `AskUserQuestion` tool **before any implementation**. Phrase each point as a yes/no question with your proposed default as the first option, e.g. "Figma shows 3 columns but the ticket says 4. Use Figma's 3?" with options `Yes (Recommended)` / `No`. Use a short multiple choice only when yes/no can't express it. Max 4 questions per call; call again if there are more. Each question must stand on its own (name the screen or field).
+     - Wait for the answers, update the plan, and record each answer in the plan as a decision (it goes into the PR body). Never start step 4 with an open question.
+     - If everything is clear and consistent, don't ask anything; continue immediately.
    - **Plan-only mode** (`--plan`): stop here. Print the plan, post it as a Jira comment if a key exists (prefixed "Proposed technical plan"), and wait for the user to approve or adjust in the session. On approval continue with the pipeline using the adjusted plan.
 4. **Implement**: spawn `developer` subagent(s) following the plan. DB schema changes: `npm run db:generate` then `npm run db:migrate`, never push.
 5. **Test** (`tester` subagent)
@@ -68,4 +79,4 @@ Strip the flag `--plan` (anywhere) and remember it (plan-only mode, see Plan). I
 - Never push to `develop` or `main`. Force-push only your own feature branch, and only when needed.
 - Never run `drizzle push`.
 - Never modify CI, or skip/disable tests, to make checks pass.
-- Ask the user only when a requirement is ambiguous and truly blocking; otherwise decide and note the assumption in the PR.
+- Ask the user only in the clarify step (before implementation), as yes/no questions. After implementation starts, decide minor gaps yourself and note the assumption in the PR; stop and ask only for something truly blocking.
