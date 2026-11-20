@@ -2,13 +2,13 @@
 commit-msg:
   jobs:
     - name: commitlint
-      run: npx --no -- commitlint --edit {1}
+      run: scripts/ai/with-node.sh npx --no -- commitlint --edit {1}
 
 # Validate content before committing
 pre-commit:
   jobs:
     - name: ultracite
-      run: npx ultracite fix --type-aware --type-check
+      run: scripts/ai/with-node.sh npx ultracite fix --type-aware --type-check
       glob:
         - '**/*.js'
         - '**/*.jsx'
@@ -19,5 +19,5 @@ pre-commit:
         - '**/*.css'
       stage_fixed: true
     - name: knip
-      run: npm run check:deps
+      run: scripts/ai/with-node.sh npm run check:deps
       glob: '*'
