@@ -178,7 +178,7 @@ Rules for implementing tickets that contain only Figma designs and no technical 
 
 ### 4.8.2 Design token reference
 
-Source: Figma GroceryApp, Colors and Typography frames. Font: Poppins via `next/font/google` (400, 500, 600, 700), exposed as `--font-poppins` on `<html>` and used by `--font-sans` (Storybook falls back to the system sans stack).
+Source: Figma GroceryApp, Colors and Typography frames. Font: Poppins via `next/font/google` (300, 400, 500, 600, 700), exposed as `--font-poppins` on `<html>` and used by `--font-sans` (Storybook falls back to the system sans stack).
 
 | Token (utility) | Value | Figma name |
 |---|---|---|
@@ -202,7 +202,7 @@ Source: Figma GroceryApp, Colors and Typography frames. Font: Poppins via `next/
 | `--border` / `--input` / `--ring` | #EBEBEB / #DADCE0 / #AEDC81 | Border / divider / primary |
 | `--radius` | 0.25rem | swatch corners |
 
-Typography utilities (`text-<style>`, include line height and weight): `title-sm` 15/20 600, `title-md` 20/25 600, `title-lg` 25/30 600, `title-xl` 30/36 600, `paragraph` 15/21 400, `paragraph-medium` 12/21 500, `label` 12/15 500, `heading-1` 30/1.3 700 (letter-spacing 3%), `paragraph-1` 15/normal 500 (letter-spacing 3%).
+Typography utilities (`text-<style>`, include line height and weight): `title-sm` 15/20 600, `title-md` 20/25 600, `title-lg` 25/30 600, `title-xl` 30/36 600, `paragraph` 15/21 400, `paragraph-medium` 12/21 500, `label` 12/15 500, `heading-1` 30/1.3 700 (letter-spacing 3%), `paragraph-1` 15/normal 500 (letter-spacing 3%), `heading-2` 25/normal 600, `toolbar` 18/normal 500, `caption` 15/normal 300 (all letter-spacing 3%). Radius tokens: `rounded-button` 5px, `rounded-sheet` 10px.
 
 Usage rules:
 - Components (shadcn primitives): semantic utilities (`bg-primary`, `text-muted-foreground`, `border-input`).

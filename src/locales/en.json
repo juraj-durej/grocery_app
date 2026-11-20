@@ -17,6 +17,11 @@
   "WelcomePage": {
     "meta_title": "Welcome",
     "meta_description": "Welcome to the grocery app",
-    "title": "Welcome"
+    "title_bar": "Welcome",
+    "heading": "Welcome",
+    "paragraph": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy",
+    "back_label": "Back",
+    "create_account_button": "Create an account",
+    "login_prompt": "Already have an account ? <login>Login</login>"
   }
 }
