@@ -5,8 +5,8 @@ import { defineConfig, devices } from '@playwright/test';
 // to avoid conflicts with the Next.js default port 3000.
 const PORT = process.env.PORT ?? '3008';
 
-// PGlite port, set at random per working tree in .env.local by scripts/ai/setup-worktree.sh (default 5432).
-const DB_PORT = process.env.DB_PORT ?? '5432';
+// PGlite port, set at random per working tree in .env.local by scripts/ai/setup-worktree.sh (default 5433, so a local Postgres on 5432 is never used).
+const DB_PORT = process.env.DB_PORT ?? '5433';
 
 // Set webServer.url and use.baseURL with the location of the WebServer respecting the correct set port
 const localBaseURL = `http://localhost:${PORT}`;

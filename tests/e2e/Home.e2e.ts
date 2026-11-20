@@ -55,7 +55,7 @@ const inactiveColor = 'rgb(220, 220, 220)';
 
 const dot = (page: Page, position: number, name = `Go to slide ${position}`) =>
   page
-    .getByRole('group', { name: /^(Choose slide|Choisir la diapositive)$/u })
+    .getByRole('group', { name: /^(Choose slide|Velg lysbilde)$/u })
     .getByRole('button', { name });
 
 // Asserts that exactly the given one-based dot is current and green while the other three are grey.
@@ -300,37 +300,37 @@ test.describe('Home page', () => {
     });
   });
 
-  test.describe('French locale', () => {
+  test.describe('Norwegian locale', () => {
     test('displays the translated slide 1 heading', async ({ page }) => {
-      await page.goto('/fr');
+      await page.goto('/nb');
 
       await expect(
-        page.getByRole('heading', { level: 1, name: 'Bienvenue chez BIG CART' }),
+        page.getByRole('heading', { level: 1, name: 'Velkommen til BIG CART' }),
       ).toBeInViewport();
     });
 
     test('displays the translated slide 2 heading after scrolling', async ({ page }) => {
-      await page.goto('/fr');
+      await page.goto('/nb');
 
       await scrollToSlide(page, 2);
 
       await expect(
-        page.getByRole('heading', { level: 2, name: /produits laitiers de qualité/u }),
+        page.getByRole('heading', { level: 2, name: /meieriprodukter\s*av høy kvalitet/u }),
       ).toBeInViewport();
     });
 
     test('displays the translated page dot labels', async ({ page }) => {
-      await page.goto('/fr');
+      await page.goto('/nb');
 
-      await expect(page.getByRole('group', { name: 'Choisir la diapositive' })).toBeVisible();
-      await expect(page.getByRole('button', { name: /^Aller à la diapositive \d$/u })).toHaveText([
+      await expect(page.getByRole('group', { name: 'Velg lysbilde' })).toBeVisible();
+      await expect(page.getByRole('button', { name: /^Gå til lysbilde \d$/u })).toHaveText([
         '',
         '',
         '',
         '',
       ]);
-      await expect(dot(page, 1, 'Aller à la diapositive 1')).toBeVisible();
-      await expect(dot(page, 4, 'Aller à la diapositive 4')).toBeVisible();
+      await expect(dot(page, 1, 'Gå til lysbilde 1')).toBeVisible();
+      await expect(dot(page, 4, 'Gå til lysbilde 4')).toBeVisible();
     });
   });
 });
