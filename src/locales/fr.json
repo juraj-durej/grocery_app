@@ -9,6 +9,8 @@
     "slide_4_heading": "Profitez de remises <br></br>sur tous les produits",
     "slide_paragraph": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy",
     "slides_label": "Bienvenue",
-    "slide_label": "{index} sur {total}"
+    "slide_label": "{index} sur {total}",
+    "dots_label": "Choisir la diapositive",
+    "dot_label": "Aller à la diapositive {index}"
   }
 }

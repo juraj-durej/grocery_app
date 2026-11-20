@@ -64,6 +64,7 @@
   /* Fill is #407EC7; the Figma caption says 1A0DAB. Fill used, pending design confirmation. */
   --color-link: #407ec7;
   --color-divider: #dadce0;
+  --color-pointer-inactive: #dcdcdc;
 
   /* Title sizes: caption ladder 15/20/25/30; line heights derived (size + 5), not in Figma. */
   --text-title-sm: 15px;

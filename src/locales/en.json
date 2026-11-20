@@ -9,6 +9,8 @@
     "slide_4_heading": "Get Discounts <br></br>On All Products",
     "slide_paragraph": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy",
     "slides_label": "Welcome",
-    "slide_label": "{index} of {total}"
+    "slide_label": "{index} of {total}",
+    "dots_label": "Choose slide",
+    "dot_label": "Go to slide {index}"
   }
 }
