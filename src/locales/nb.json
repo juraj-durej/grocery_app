@@ -23,5 +23,21 @@
     "back_label": "Tilbake",
     "create_account_button": "Opprett en konto",
     "login_prompt": "Har du allerede en konto? <login>Logg inn</login>"
+  },
+  "SignUpPage": {
+    "meta_title": "Opprett konto",
+    "meta_description": "Opprett kontoen din i dagligvareappen",
+    "title_bar": "Velkommen",
+    "back_label": "Tilbake",
+    "heading": "Opprett konto",
+    "paragraph": "Opprett en konto raskt"
+  },
+  "SignInPage": {
+    "meta_title": "Logg inn",
+    "meta_description": "Logg inn på kontoen din i dagligvareappen",
+    "title_bar": "Velkommen",
+    "back_label": "Tilbake",
+    "heading": "Velkommen tilbake!",
+    "paragraph": "Logg inn på kontoen din"
   }
 }

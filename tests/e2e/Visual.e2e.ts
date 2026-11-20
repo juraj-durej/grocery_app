@@ -11,5 +11,29 @@ test.describe('Visual testing', () => {
 
       await takeSnapshot(page, testInfo);
     });
+
+    test('takes a screenshot of the sign-up page', async ({ page }, testInfo) => {
+      await page.goto('/sign-up');
+
+      await expect(page.getByRole('heading', { level: 1, name: 'Create account' })).toBeVisible();
+
+      await page.waitForFunction(() =>
+        [...document.images].every((img) => img.complete && img.naturalWidth > 0),
+      );
+
+      await takeSnapshot(page, testInfo);
+    });
+
+    test('takes a screenshot of the sign-in page', async ({ page }, testInfo) => {
+      await page.goto('/sign-in');
+
+      await expect(page.getByRole('heading', { level: 1, name: 'Welcome back !' })).toBeVisible();
+
+      await page.waitForFunction(() =>
+        [...document.images].every((img) => img.complete && img.naturalWidth > 0),
+      );
+
+      await takeSnapshot(page, testInfo);
+    });
   });
 });

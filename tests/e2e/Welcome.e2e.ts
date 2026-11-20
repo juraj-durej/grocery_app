@@ -67,6 +67,46 @@ test.describe('Welcome page', () => {
     });
   });
 
+  test.describe('Navigation to the auth screens', () => {
+    test('opens the create account screen after tapping Create an account', async ({ page }) => {
+      await page.goto('/welcome');
+
+      await page.getByRole('link', { name: 'Create an account' }).click();
+
+      await expect(page).toHaveURL(/\/sign-up$/u);
+      await expect(page.getByRole('heading', { level: 1, name: 'Create account' })).toBeVisible();
+    });
+
+    test('opens the login screen after tapping Login', async ({ page }) => {
+      await page.goto('/welcome');
+
+      await page.getByRole('link', { name: 'Login' }).click();
+
+      await expect(page).toHaveURL(/\/sign-in$/u);
+      await expect(page.getByRole('heading', { level: 1, name: 'Welcome back !' })).toBeVisible();
+    });
+
+    test('opens the Norwegian create account screen', async ({ page }) => {
+      await page.goto('/nb/welcome');
+
+      await page.getByRole('link', { name: 'Opprett en konto' }).click();
+
+      await expect(page).toHaveURL(/\/nb\/sign-up$/u);
+      await expect(page.getByRole('heading', { level: 1, name: 'Opprett konto' })).toBeVisible();
+    });
+
+    test('opens the Norwegian login screen', async ({ page }) => {
+      await page.goto('/nb/welcome');
+
+      await page.getByRole('link', { name: 'Logg inn' }).click();
+
+      await expect(page).toHaveURL(/\/nb\/sign-in$/u);
+      await expect(
+        page.getByRole('heading', { level: 1, name: 'Velkommen tilbake!' }),
+      ).toBeVisible();
+    });
+  });
+
   test.describe('Back arrow', () => {
     test('opens the last onboarding slide', async ({ page }) => {
       await page.goto('/welcome');

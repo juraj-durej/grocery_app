@@ -23,5 +23,21 @@
     "back_label": "Back",
     "create_account_button": "Create an account",
     "login_prompt": "Already have an account ? <login>Login</login>"
+  },
+  "SignUpPage": {
+    "meta_title": "Create account",
+    "meta_description": "Create your grocery app account",
+    "title_bar": "Welcome",
+    "back_label": "Back",
+    "heading": "Create account",
+    "paragraph": "Quickly create account"
+  },
+  "SignInPage": {
+    "meta_title": "Login",
+    "meta_description": "Log in to your grocery app account",
+    "title_bar": "Welcome",
+    "back_label": "Back",
+    "heading": "Welcome back !",
+    "paragraph": "Sign in to your account"
   }
 }
