@@ -52,7 +52,7 @@ Rules for implementing tickets that contain only Figma designs and no technical 
 - `src/app/[locale]/` all UI routes. Root `layout.tsx` validates locale and provides `NextIntlClientProvider`.
   - `page.tsx` home page (`WelcomeSlides` carousel, `SlidesCarousel` client leaf, `SlideDots`).
   - Add public pages as route groups (for example `(marketing)/`) and protected pages under `(auth)/dashboard/` (protected by `src/proxy.ts`).
-  - Auth pages (sign in, sign up) are not implemented yet; the proxy redirects unauthenticated users to `/sign-in`. Create them under a new `(auth)`-style public route group when a ticket asks (see section 5, recipe 2).
+  - `welcome/`, `sign-up/`, `sign-in/` public auth screens (`AuthScreen` layout). `/sign-up` and `/sign-in` are minimal (hero + heading); the forms come in later tickets. The proxy redirects unauthenticated users to `/sign-in`.
 - `src/app/api/` route handlers, only for external consumers, webhooks or non-form HTTP clients. Not locale-prefixed.
 - `src/app/{robots,sitemap}.ts`, `global-error.tsx` app-level special files.
 - `src/actions/` server actions, one file per domain: `AuthActions.ts`, `<Domain>Actions.ts`.
@@ -202,7 +202,7 @@ Source: Figma GroceryApp, Colors and Typography frames. Font: Poppins via `next/
 | `--border` / `--input` / `--ring` | #EBEBEB / #DADCE0 / #AEDC81 | Border / divider / primary |
 | `--radius` | 0.25rem | swatch corners |
 
-Typography utilities (`text-<style>`, include line height and weight): `title-sm` 15/20 600, `title-md` 20/25 600, `title-lg` 25/30 600, `title-xl` 30/36 600, `paragraph` 15/21 400, `paragraph-medium` 12/21 500, `label` 12/15 500, `heading-1` 30/1.3 700 (letter-spacing 3%), `paragraph-1` 15/normal 500 (letter-spacing 3%), `heading-2` 25/normal 600, `toolbar` 18/normal 500, `caption` 15/normal 300 (all letter-spacing 3%). Radius tokens: `rounded-button` 5px, `rounded-sheet` 10px.
+Typography utilities (`text-<style>`, include line height and weight): `title-sm` 15/20 600, `title-md` 20/25 600, `title-lg` 25/30 600, `title-xl` 30/36 600, `paragraph` 15/21 400, `paragraph-medium` 12/21 500, `label` 12/15 500, `heading-1` 30/1.3 700 (letter-spacing 3%), `paragraph-1` 15/normal 500 (letter-spacing 3%), `paragraph-2` 15/normal 400 (letter-spacing 3%), `heading-2` 25/normal 600, `toolbar` 18/normal 500, `caption` 15/normal 300 (all letter-spacing 3%). Radius tokens: `rounded-button` 5px, `rounded-sheet` 10px.
 
 Usage rules:
 - Components (shadcn primitives): semantic utilities (`bg-primary`, `text-muted-foreground`, `border-input`).
@@ -276,7 +276,7 @@ Open design questions:
 1. Create `src/app/[locale]/(auth)/dashboard/<route>/page.tsx`. The proxy already guards `/dashboard/*`; no metadata in the page (layout owns it).
 2. In the page, call `createSupabaseServerClient().auth.getUser()` when you need the user; scope all queries by `user.id`.
 3. When a dashboard layout exists, add a nav entry in `dashboard/layout.tsx` with a translated label (create the layout with the dashboard metadata if it does not exist yet).
-4. Sign-in/sign-up pages do not exist yet. When a ticket needs them, create them as public pages (for example `src/app/[locale]/(marketing)/sign-in/page.tsx`; `/sign-in` is the proxy's redirect target and must not be under `/dashboard`) with actions in `AuthActions.ts`.
+4. `/sign-up` and `/sign-in` exist as minimal public screens (hero + heading, no forms yet; `src/app/[locale]/sign-in/page.tsx`). When a ticket adds the forms, render them inside `AuthScreen` with actions in `AuthActions.ts`; `/sign-in` is the proxy redirect target and must not be under `/dashboard`.
 
 ### 5.3 Add a form with a server action
 1. Schema: `src/validations/<Name>Validation.ts` (`z.object`, translated error keys).
