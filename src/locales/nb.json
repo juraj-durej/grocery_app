@@ -11,6 +11,12 @@
     "slides_label": "Velkommen",
     "slide_label": "{index} av {total}",
     "dots_label": "Velg lysbilde",
-    "dot_label": "Gå til lysbilde {index}"
+    "dot_label": "Gå til lysbilde {index}",
+    "get_started_button": "Kom i gang"
+  },
+  "WelcomePage": {
+    "meta_title": "Velkommen",
+    "meta_description": "Velkommen til dagligvareappen",
+    "title": "Velkommen"
   }
 }

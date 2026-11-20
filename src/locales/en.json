@@ -11,6 +11,12 @@
     "slides_label": "Welcome",
     "slide_label": "{index} of {total}",
     "dots_label": "Choose slide",
-    "dot_label": "Go to slide {index}"
+    "dot_label": "Go to slide {index}",
+    "get_started_button": "Get started"
+  },
+  "WelcomePage": {
+    "meta_title": "Welcome",
+    "meta_description": "Welcome to the grocery app",
+    "title": "Welcome"
   }
 }

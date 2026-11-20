@@ -1,6 +1,9 @@
 import { useTranslations } from 'next-intl';
+import { GetStartedButton } from '@/components/GetStartedButton';
 import { SlidesCarousel } from '@/components/SlidesCarousel';
 import { WelcomeSlide } from '@/components/WelcomeSlide';
+
+const CAROUSEL_ID = 'welcome-slides';
 
 /**
  * Renders the welcome slides as a native horizontal scroll-snap carousel.
@@ -35,17 +38,20 @@ export function WelcomeSlides() {
   ];
 
   return (
-    <SlidesCarousel label={t('slides_label')} count={slides.length}>
-      {slides.map((slide, index) => (
-        <WelcomeSlide
-          key={slide.photoSrc}
-          heading={slide.heading}
-          photoSrc={slide.photoSrc}
-          photoClassName={slide.photoClassName}
-          position={index + 1}
-          total={slides.length}
-        />
-      ))}
-    </SlidesCarousel>
+    <>
+      <SlidesCarousel id={CAROUSEL_ID} label={t('slides_label')} count={slides.length}>
+        {slides.map((slide, index) => (
+          <WelcomeSlide
+            key={slide.photoSrc}
+            heading={slide.heading}
+            photoSrc={slide.photoSrc}
+            photoClassName={slide.photoClassName}
+            position={index + 1}
+            total={slides.length}
+          />
+        ))}
+      </SlidesCarousel>
+      <GetStartedButton carouselId={CAROUSEL_ID} total={slides.length} />
+    </>
   );
 }

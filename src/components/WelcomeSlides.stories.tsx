@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { NextIntlClientProvider } from 'next-intl';
 import enMessages from '@/locales/en.json';
 import nbMessages from '@/locales/nb.json';
+import { StoryAppRouter } from './StoryAppRouter';
 import { WelcomeSlides } from './WelcomeSlides';
 
 const meta = {
@@ -13,9 +14,11 @@ const meta = {
   },
   decorators: [
     (Story) => (
-      <NextIntlClientProvider locale="en" messages={enMessages}>
-        <Story />
-      </NextIntlClientProvider>
+      <StoryAppRouter>
+        <NextIntlClientProvider locale="en" messages={enMessages}>
+          <Story />
+        </NextIntlClientProvider>
+      </StoryAppRouter>
     ),
   ],
 } satisfies Meta<typeof WelcomeSlides>;

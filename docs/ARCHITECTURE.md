@@ -17,7 +17,7 @@ Rules for implementing tickets that contain only Figma designs and no technical 
   - Logging: no `console.*` in app code (use LogTape).
   - Tests: no Jest, Cypress, React Testing Library.
   - Tooling: no ESLint/Prettier/Husky (project uses Oxlint/Oxfmt/Lefthook).
-- Demo boilerplate code (counter, portfolio, about, marketing layout, demo components, `BaseTemplate`) was removed in TASK-131. The home page is the four-slide welcome carousel (`WelcomeSlides` server component, native CSS scroll-snap; the small client leaf `SlidesCarousel` tracks the active slide for the `SlideDots` page dots via `getActiveSlideIndex` in `src/utils/Slides.ts`).
+- Demo boilerplate code (counter, portfolio, about, marketing layout, demo components, `BaseTemplate`) was removed in TASK-131. The home page is the four-slide welcome carousel (`WelcomeSlides` server component, native CSS scroll-snap; the client leaves are `SlidesCarousel`, which tracks the active slide for the `SlideDots` page dots via `getActiveSlideIndex` in `src/utils/Slides.ts`, and `GetStartedButton`, which advances the carousel and opens `/welcome` from the last slide).
 - `AppConfig.name` is still the placeholder `Nextjs Starter`. Do not hard-code the app name elsewhere; read `AppConfig`.
 - Unknown requirement or conflicting design: choose the simplest option consistent with this file, state the assumption in the PR.
 

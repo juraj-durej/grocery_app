@@ -6,16 +6,22 @@ import { getActiveSlideIndex } from '@/utils/Slides';
 
 /**
  * Wraps the slides in the scroll-snap container and tracks the active slide for the page dots.
- * @param props - Accessible label, slide count and the slides.
+ * @param props - Element id, accessible label, slide count and the slides.
  * @returns The carousel landmark with the dot overlay.
  */
-export function SlidesCarousel(props: { label: string; count: number; children: React.ReactNode }) {
+export function SlidesCarousel(props: {
+  id: string;
+  label: string;
+  count: number;
+  children: React.ReactNode;
+}) {
   const [activeIndex, setActiveIndex] = useState(0);
   const mainRef = useRef<HTMLElement>(null);
 
   return (
     // Scrollbar hidden through arbitrary properties so the carousel stays scrollable by touch and keyboard.
     <main
+      id={props.id}
       aria-roledescription="carousel"
       aria-label={props.label}
       // Keyboard-scrollable region with no interactive children, so it must be focusable itself.
