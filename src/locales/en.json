@@ -9,6 +9,12 @@
     "slide_4_heading": "Get Discounts <br></br>On All Products",
     "slide_paragraph": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy",
     "slides_label": "Welcome",
-    "slide_label": "{index} of {total}"
+    "slide_label": "{index} of {total}",
+    "get_started_button": "Get started"
+  },
+  "WelcomePage": {
+    "meta_title": "Welcome",
+    "meta_description": "Welcome to the grocery app",
+    "title": "Welcome"
   }
 }

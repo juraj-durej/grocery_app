@@ -98,6 +98,9 @@
   --text-paragraph-1--line-height: normal;
   --text-paragraph-1--font-weight: 500;
   --text-paragraph-1--letter-spacing: 0.03em;
+
+  --radius-button: 5px;
+  --shadow-brand: 0 10px 9px rgb(108 197 29 / 0.25);
 }
 
 @theme inline {

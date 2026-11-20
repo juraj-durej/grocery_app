@@ -9,6 +9,12 @@
     "slide_4_heading": "Profitez de remises <br></br>sur tous les produits",
     "slide_paragraph": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy",
     "slides_label": "Bienvenue",
-    "slide_label": "{index} sur {total}"
+    "slide_label": "{index} sur {total}",
+    "get_started_button": "Commencer"
+  },
+  "WelcomePage": {
+    "meta_title": "Bienvenue",
+    "meta_description": "Bienvenue dans l'application d'épicerie",
+    "title": "Bienvenue"
   }
 }
