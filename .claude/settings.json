@@ -26,6 +26,7 @@
     ]
   },
   "permissions": {
+    "allow": ["Bash(scripts/ai/stop-tree.sh:*)"],
     "deny": [
       "Bash(drizzle-kit push:*)",
       "Bash(npx drizzle-kit push:*)",
