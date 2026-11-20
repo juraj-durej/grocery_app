@@ -238,6 +238,15 @@ Open design questions:
 - Storybook: every new reusable component in `src/components` gets `<Name>.stories.tsx` (CSF3, `satisfies Meta<typeof X>`, `@storybook/nextjs-vite` types, `NextIntlClientProvider` decorator, `nextjs.appDirectory: false` parameter). Cover default, empty/long-content and error/disabled states. The a11y addon must show no violations.
 - Run `test` and `test:e2e` for changed areas; run `storybook:test` when stories change.
 
+### 4.10.1 Local servers and worktree ports
+
+- Each worktree gets random `PORT` and `DB_PORT` in `.env.local` (via `scripts/ai/setup-worktree.sh`); never hard-code 3000/5432.
+- In one worktree only one agent at a time runs commands that start servers or the DB (`build-local`, `test:e2e`, `dev`, `storybook:test`); the coordinator serialises them.
+- Whoever starts a server stops it before reporting. Before handing back, run `scripts/ai/stop-tree.sh` and confirm `PORT` and `DB_PORT` are free.
+- `scripts/ai/stop-tree.sh` SIGTERMs (then SIGKILLs after 5s) only listeners on this tree's ports that belong to this worktree. `--clean-next-dev` also removes `.next/dev` (stale generated types that break `check:types`).
+- On EADDRINUSE run `stop-tree.sh`; never start a manual `next dev` workaround and never use `pkill`/`killall`/pattern kills (they hit other worktrees).
+- The `db-server:*` scripts `exec` pglite-server, so Ctrl-C and SIGTERM reach it and no orphan keeps the port.
+
 ### 4.11 Performance and accessibility
 
 - Keep client bundles small: Server Components first, `next/dynamic` for heavy client-only widgets, no large libraries in client components.
