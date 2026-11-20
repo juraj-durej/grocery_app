@@ -17,7 +17,7 @@ Rules for implementing tickets that contain only Figma designs and no technical 
   - Logging: no `console.*` in app code (use LogTape).
   - Tests: no Jest, Cypress, React Testing Library.
   - Tooling: no ESLint/Prettier/Husky (project uses Oxlint/Oxfmt/Lefthook).
-- Demo boilerplate code (counter, portfolio, about, marketing layout, demo components, `BaseTemplate`) was removed in TASK-131. The home page is the four-slide welcome carousel (`WelcomeSlides`, native CSS scroll-snap, no client JS).
+- Demo boilerplate code (counter, portfolio, about, marketing layout, demo components, `BaseTemplate`) was removed in TASK-131. The home page is the four-slide welcome carousel (`WelcomeSlides` server component, native CSS scroll-snap; the small client leaf `SlidesCarousel` tracks the active slide for the `SlideDots` page dots via `getActiveSlideIndex` in `src/utils/Slides.ts`).
 - `AppConfig.name` is still the placeholder `Nextjs Starter`. Do not hard-code the app name elsewhere; read `AppConfig`.
 - Unknown requirement or conflicting design: choose the simplest option consistent with this file, state the assumption in the PR.
 
@@ -50,7 +50,7 @@ Rules for implementing tickets that contain only Figma designs and no technical 
 ## 3. Folder map
 
 - `src/app/[locale]/` all UI routes. Root `layout.tsx` validates locale and provides `NextIntlClientProvider`.
-  - `page.tsx` home page (`WelcomeSlides` carousel).
+  - `page.tsx` home page (`WelcomeSlides` carousel, `SlidesCarousel` client leaf, `SlideDots`).
   - Add public pages as route groups (for example `(marketing)/`) and protected pages under `(auth)/dashboard/` (protected by `src/proxy.ts`).
   - Auth pages (sign in, sign up) are not implemented yet; the proxy redirects unauthenticated users to `/sign-in`. Create them under a new `(auth)`-style public route group when a ticket asks (see section 5, recipe 2).
 - `src/app/api/` route handlers, only for external consumers, webhooks or non-form HTTP clients. Not locale-prefixed.
@@ -62,7 +62,7 @@ Rules for implementing tickets that contain only Figma designs and no technical 
 - `src/libs/` third-party wiring and singletons (`DB.ts`, `Env.ts`, `Logger.ts`, `Arcjet.ts`, `SupabaseServer.ts`, `I18n*.ts`). PascalCase files.
 - `src/models/Schema.ts` the single Drizzle schema file; `src/models/Seed.ts` deterministic seed data for every table.
 - `src/validations/<Name>Validation.ts` Zod schemas, exported as `<Name>Validation`.
-- `src/utils/` pure helpers and config (`AppConfig.ts`, `Helpers.ts`, `DBConnection.ts`, `Cn.ts` with `cn()`).
+- `src/utils/` pure helpers and config (`AppConfig.ts`, `Helpers.ts`, `DBConnection.ts`, `Cn.ts` with `cn()`, `Slides.ts` with `getActiveSlideIndex`).
 - `src/types/` shared types (`I18n.ts`).
 - `src/locales/{en,fr}.json` message catalogs.
 - `src/styles/global.css` Tailwind entry, shadcn theme variables and design tokens.
@@ -192,6 +192,7 @@ Source: Figma GroceryApp, Colors and Typography frames. Font: Poppins via `next/
 | `--color-text-tertiary` | #6F6F6F | variable tertiary |
 | `--color-link` | #407EC7 | link |
 | `--color-divider` | #DADCE0 | variable divider |
+| `--color-pointer-inactive` | #DCDCDC | pointers (inactive bullet) |
 | `--foreground` | #202124 | variable primary (heading text) |
 | `--background`, `--card`, `--popover` | #FFFFFF | background |
 | `--primary` | #6CC51D | primary-dark |
