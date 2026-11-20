@@ -6,17 +6,19 @@ import { getActiveSlideIndex } from '@/utils/Slides';
 
 /**
  * Wraps the slides in the scroll-snap container and tracks the active slide for the page dots.
- * @param props - Element id, accessible label, slide count and the slides.
+ * @param props - Element id, accessible label, slide count, initial slide index and the slides.
  * @returns The carousel landmark with the dot overlay.
  */
 export function SlidesCarousel(props: {
   id: string;
   label: string;
   count: number;
+  initialIndex?: number;
   children: React.ReactNode;
 }) {
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(props.initialIndex ?? 0);
   const mainRef = useRef<HTMLElement>(null);
+  const positioned = useRef(false);
 
   return (
     // Scrollbar hidden through arbitrary properties so the carousel stays scrollable by touch and keyboard.
@@ -27,7 +29,14 @@ export function SlidesCarousel(props: {
       // Keyboard-scrollable region with no interactive children, so it must be focusable itself.
       // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex
       tabIndex={0}
-      ref={mainRef}
+      ref={(element) => {
+        mainRef.current = element;
+        // Open on the requested slide once, without smooth scrolling and without an effect.
+        if (element && !positioned.current) {
+          positioned.current = true;
+          element.scrollTo({ left: activeIndex * element.clientWidth, behavior: 'instant' });
+        }
+      }}
       onScroll={(event) => {
         setActiveIndex(
           getActiveSlideIndex({

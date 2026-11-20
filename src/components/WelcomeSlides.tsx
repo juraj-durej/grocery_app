@@ -7,9 +7,10 @@ const CAROUSEL_ID = 'welcome-slides';
 
 /**
  * Renders the welcome slides as a native horizontal scroll-snap carousel.
+ * @param props - Zero-based index of the slide to open on.
  * @returns The carousel landmark.
  */
-export function WelcomeSlides() {
+export function WelcomeSlides(props: { initialIndex?: number }) {
   const t = useTranslations('IndexPage');
   const br = { br: () => <br /> };
 
@@ -39,7 +40,12 @@ export function WelcomeSlides() {
 
   return (
     <>
-      <SlidesCarousel id={CAROUSEL_ID} label={t('slides_label')} count={slides.length}>
+      <SlidesCarousel
+        id={CAROUSEL_ID}
+        label={t('slides_label')}
+        count={slides.length}
+        initialIndex={props.initialIndex}
+      >
         {slides.map((slide, index) => (
           <WelcomeSlide
             key={slide.photoSrc}

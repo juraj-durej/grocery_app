@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getActiveSlideIndex } from './Slides';
+import { getActiveSlideIndex, parseSlideParam } from './Slides';
 
 describe('Slides', () => {
   describe('active slide index', () => {
@@ -30,6 +30,33 @@ describe('Slides', () => {
 
     it('returns the first slide when width is zero', () => {
       expect(getActiveSlideIndex({ scrollLeft: 100, slideWidth: 0, count: 4 })).toBe(0);
+    });
+  });
+
+  describe('slide param', () => {
+    it('returns the first slide when missing', () => {
+      expect(parseSlideParam(undefined, 4)).toBe(0);
+    });
+
+    it('converts a valid one-based value', () => {
+      expect(parseSlideParam('4', 4)).toBe(3);
+      expect(parseSlideParam('1', 4)).toBe(0);
+    });
+
+    it('clamps an out-of-range value', () => {
+      expect(parseSlideParam('9', 4)).toBe(3);
+      expect(parseSlideParam('0', 4)).toBe(0);
+    });
+
+    it('returns the first slide for a non-numeric value', () => {
+      expect(parseSlideParam('abc', 4)).toBe(0);
+      expect(parseSlideParam('-2', 4)).toBe(0);
+      expect(parseSlideParam('', 4)).toBe(0);
+      expect(parseSlideParam('1.5', 4)).toBe(0);
+    });
+
+    it('returns the first slide for an array', () => {
+      expect(parseSlideParam(['3', '2'], 4)).toBe(0);
     });
   });
 });

@@ -16,3 +16,20 @@ export function getActiveSlideIndex(options: {
 
   return Math.min(Math.max(index, 0), options.count - 1);
 }
+
+/** Number of onboarding slides on the index page; must equal the number of slides in `WelcomeSlides`. */
+export const SLIDE_COUNT = 4;
+
+/**
+ * Parses the one-based `slide` query param into a zero-based slide index.
+ * @param value - Raw search param value.
+ * @param count - Number of slides.
+ * @returns The zero-based index, clamped to the valid range; 0 when missing or invalid.
+ */
+export function parseSlideParam(value: string | string[] | undefined, count: number) {
+  if (typeof value !== 'string' || !/^\d+$/u.test(value)) {
+    return 0;
+  }
+
+  return Math.min(Math.max(Number(value) - 1, 0), count - 1);
+}

@@ -17,6 +17,11 @@
   "WelcomePage": {
     "meta_title": "Velkommen",
     "meta_description": "Velkommen til dagligvareappen",
-    "title": "Velkommen"
+    "title_bar": "Velkommen",
+    "heading": "Velkommen",
+    "paragraph": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy",
+    "back_label": "Tilbake",
+    "create_account_button": "Opprett en konto",
+    "login_prompt": "Har du allerede en konto? <login>Logg inn</login>"
   }
 }

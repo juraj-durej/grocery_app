@@ -100,7 +100,22 @@
   --text-paragraph-1--font-weight: 500;
   --text-paragraph-1--letter-spacing: 0.03em;
 
+  /* Figma text styles for the welcome screen: Heading2 (SemiBold 25), Toolbar (Medium 18), Caption (Light 15). */
+  --text-heading-2: 25px;
+  --text-heading-2--line-height: normal;
+  --text-heading-2--font-weight: 600;
+  --text-heading-2--letter-spacing: 0.03em;
+  --text-toolbar: 18px;
+  --text-toolbar--line-height: normal;
+  --text-toolbar--font-weight: 500;
+  --text-toolbar--letter-spacing: 0.03em;
+  --text-caption: 15px;
+  --text-caption--line-height: normal;
+  --text-caption--font-weight: 300;
+  --text-caption--letter-spacing: 0.03em;
+
   --radius-button: 5px;
+  --radius-sheet: 10px;
   --shadow-brand: 0 10px 9px rgb(108 197 29 / 0.25);
 }
 
