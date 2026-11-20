@@ -136,6 +136,69 @@ test.describe('Home page', () => {
     });
   }
 
+  test.describe('Get started button', () => {
+    test('stays at the same position on all four slides', async ({ page }) => {
+      await page.setViewportSize({ width: 414, height: 896 });
+      await page.goto('/');
+
+      const button = page.getByRole('button', { name: 'Get started' });
+      await expect(button).toHaveCount(1);
+
+      const measure = async (position: number) => {
+        await scrollToSlide(page, position);
+        await expectRestingOn(page, position - 1);
+        await expect(button).toBeInViewport({ ratio: 1 });
+        return await button.boundingBox();
+      };
+      const first = await measure(1);
+      const second = await measure(2);
+      const third = await measure(3);
+      const fourth = await measure(4);
+      const boxes = [first, second, third, fourth];
+
+      expect(boxes[0]).not.toBeNull();
+      expect(boxes).toEqual([boxes[0], boxes[0], boxes[0], boxes[0]]);
+      expect((boxes[0]?.y ?? 0) + (boxes[0]?.height ?? 0)).toBeGreaterThan(896 / 2);
+    });
+
+    for (const position of [1, 2, 3]) {
+      test(`advances from slide ${position} to slide ${position + 1}`, async ({ page }) => {
+        await page.goto('/');
+        await scrollToSlide(page, position);
+        await expectRestingOn(page, position - 1);
+
+        await page.getByRole('button', { name: 'Get started' }).click();
+
+        await expectRestingOn(page, position);
+      });
+    }
+
+    test('navigates from slide 4 to the welcome page', async ({ page }) => {
+      await page.goto('/');
+      await scrollToSlide(page, 4);
+      await expectRestingOn(page, 3);
+
+      await page.getByRole('button', { name: 'Get started' }).click();
+
+      await expect(page).toHaveURL(/\/welcome$/u);
+      await expect(page.getByRole('heading', { level: 1, name: 'Welcome' })).toBeVisible();
+    });
+
+    test('shows slide 1 again when returning from the welcome page', async ({ page }) => {
+      await page.goto('/');
+      await scrollToSlide(page, 4);
+      await expectRestingOn(page, 3);
+      await page.getByRole('button', { name: 'Get started' }).click();
+      await expect(page).toHaveURL(/\/welcome$/u);
+
+      await page.goBack();
+
+      await expect(
+        page.getByRole('heading', { level: 1, name: 'Welcome to BIG CART' }),
+      ).toBeInViewport();
+    });
+  });
+
   test.describe('French locale', () => {
     test('displays the translated slide 1 heading', async ({ page }) => {
       await page.goto('/fr');
@@ -143,6 +206,12 @@ test.describe('Home page', () => {
       await expect(
         page.getByRole('heading', { level: 1, name: 'Bienvenue chez BIG CART' }),
       ).toBeInViewport();
+    });
+
+    test('labels the get started button in French', async ({ page }) => {
+      await page.goto('/fr');
+
+      await expect(page.getByRole('button', { name: 'Commencer' })).toBeVisible();
     });
 
     test('displays the translated slide 2 heading after scrolling', async ({ page }) => {
