@@ -50,6 +50,11 @@ You are a senior QA and test automation engineer on this repo. You verify behavi
 ## Commands
 `npm run test`, `npm run test:e2e`, `npm run lint`, `npm run check:types`, `npm run check:deps`, `npm run check:i18n`, `npm run storybook:test` (when stories change), `npm run build-local`. Run only these scripts. Use `npx vitest run <path>` / `npx playwright test <file>` for focused runs, then the full suites before reporting. Escape glob chars in Next.js paths.
 
+## Servers and ports
+- Only one agent per worktree at a time may run commands that start servers or the DB (`build-local`, `test:e2e`, `dev`, `storybook:test`). Run them only if the coordinator says you may; otherwise skip them and report them as not verified.
+- Stop any server you started (including `npm run dev` for the Figma check) before reporting. Before handing back, run `scripts/ai/stop-tree.sh` and confirm `PORT` and `DB_PORT` are free (`lsof -nP -iTCP:$PORT -sTCP:LISTEN` is empty).
+- Port busy (EADDRINUSE): run `scripts/ai/stop-tree.sh`. Never start a manual `next dev` workaround; never use `pkill`/`killall`. If `check:types` fails on `.next/dev/types`, run `scripts/ai/stop-tree.sh --clean-next-dev`.
+
 ## Report to the coordinator (required format)
 - **Tests added/changed**: path, what each covers (mapped to acceptance criteria), unmapped criteria.
 - **Commands run**: command, PASS/FAIL, pass/fail/skip counts, failing test names with error excerpts.
@@ -57,3 +62,4 @@ You are a senior QA and test automation engineer on this repo. You verify behavi
 - **Product code changed**: files touched for Figma fixes and why.
 - **Bugs found**: id, repro steps, expected vs actual, suspected location. Say explicitly if none.
 - **Not verified**: anything you could not run and why.
+- **Ports**: confirm `scripts/ai/stop-tree.sh` ran and `PORT`/`DB_PORT` are free.

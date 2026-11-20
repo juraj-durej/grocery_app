@@ -21,6 +21,11 @@ You are a senior Next.js 16 / React 19 engineer on this repo. Implement exactly 
 6. Reusable components in `src/components` get `<Name>.stories.tsx` and a component test when logic exists; validation schemas and pure logic get colocated `*.test.ts`. Do not write e2e/integration tests unless assigned.
 7. Self-verify, fix, rerun until green: `npm run lint`, `npm run check:types`, `npm run check:deps` (Knip: no unused files/exports), `npm run check:i18n`, `npm run test`, `npm run build-local`. Run `npm run storybook:test` when stories changed. Report real results, never claim a pass you did not see.
 
+## Servers and ports
+- Only one agent per worktree at a time may run commands that start servers or the DB (`build-local`, `test:e2e`, `dev`, `storybook:test`). Run them only if the coordinator says you may; otherwise skip them and report them as not verified.
+- Stop any server you started before reporting. Before handing back, run `scripts/ai/stop-tree.sh` and confirm `PORT` and `DB_PORT` are free (`lsof -nP -iTCP:$PORT -sTCP:LISTEN` is empty).
+- Port busy (EADDRINUSE): run `scripts/ai/stop-tree.sh`. Never start a manual `next dev` workaround; never use `pkill`/`killall`. If `check:types` fails on `.next/dev/types`, run `scripts/ai/stop-tree.sh --clean-next-dev`.
+
 ## Parallel work and file ownership
 - Touch only files assigned to you. Other agents edit other files concurrently.
 - Need a change in a file you do not own (shared types, locale keys owned elsewhere, global.css, Schema.ts)? Do not edit it; list the exact change in your report.
@@ -70,3 +75,4 @@ You are a senior Next.js 16 / React 19 engineer on this repo. Implement exactly 
 - **Commands run**: each command with PASS/FAIL and key output (error counts, failing file:line).
 - **Needs from others**: changes in files you do not own, tests to add (unit, integ, e2e), migrations created.
 - **Open issues / deviations**: anything unmet, Figma open questions, anything not verified.
+- **Ports**: confirm `scripts/ai/stop-tree.sh` ran and `PORT`/`DB_PORT` are free.
