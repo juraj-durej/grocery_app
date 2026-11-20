@@ -16,6 +16,7 @@ check() { local label="$1"; shift; if "$@" >/dev/null 2>&1; then ok "$label"; el
 echo "Tools"
 check "git installed" command -v git
 check "node installed" command -v node
+check "Node from .nvmrc available (scripts/ai/with-node.sh)" "$SCRIPT_DIR/with-node.sh" node -v
 check "npm installed" command -v npm
 check "claude installed" command -v claude
 check "zellij installed (brew install zellij)" command -v zellij

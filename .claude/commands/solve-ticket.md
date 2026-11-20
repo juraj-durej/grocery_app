@@ -22,7 +22,7 @@ Strip the flag `--plan` (anywhere) and remember it (plan-only mode, see Plan). I
 
 ## Environment
 
-- Work in the current worktree (`claude --worktree`); a SessionStart hook has already set up `.env.local` and deps.
+- Work in the current worktree (`claude --worktree`); a SessionStart hook has already set up `.env.local` (random ports) and deps. If you entered a worktree mid-session, run `scripts/ai/setup-worktree.sh` first. If a hook or command fails with an old Node, prefix it with `scripts/ai/with-node.sh` instead of changing PATH or sourcing nvm.
 - Read `PORT`, `DB_PORT`, `DATABASE_URL`, `NEXT_PUBLIC_APP_URL` from `.env.local`. Never hard-code 3000/5432.
 - Bun is not installed: use `npm run <script>` (only the scripts allowed in `AGENTS.md`).
 - Jira: Atlassian MCP tools (`getAccessibleAtlassianResources` for cloudId, `getJiraIssue`, `transitionJiraIssue`, `addOrEditJiraIssueComment`). Figma: Figma MCP (`get_screenshot`, `get_design_context`, `get_metadata`). GitHub: `git` and `gh`.
