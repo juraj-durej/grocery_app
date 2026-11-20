@@ -17,7 +17,7 @@ Rules for implementing tickets that contain only Figma designs and no technical 
   - Logging: no `console.*` in app code (use LogTape).
   - Tests: no Jest, Cypress, React Testing Library.
   - Tooling: no ESLint/Prettier/Husky (project uses Oxlint/Oxfmt/Lefthook).
-- Demo boilerplate code (counter, portfolio, about, marketing layout, demo components, `BaseTemplate`) was removed in TASK-131. The home page is the four-slide welcome carousel (`WelcomeSlides`, native CSS scroll-snap; the only client JS is the `GetStartedButton` leaf).
+- Demo boilerplate code (counter, portfolio, about, marketing layout, demo components, `BaseTemplate`) was removed in TASK-131. The home page is the four-slide welcome carousel (`WelcomeSlides` server component, native CSS scroll-snap; the client leaves are `SlidesCarousel`, which tracks the active slide for the `SlideDots` page dots via `getActiveSlideIndex` in `src/utils/Slides.ts`, and `GetStartedButton`, which advances the carousel and opens `/welcome` from the last slide).
 - `AppConfig.name` is still the placeholder `Nextjs Starter`. Do not hard-code the app name elsewhere; read `AppConfig`.
 - Unknown requirement or conflicting design: choose the simplest option consistent with this file, state the assumption in the PR.
 
@@ -50,7 +50,7 @@ Rules for implementing tickets that contain only Figma designs and no technical 
 ## 3. Folder map
 
 - `src/app/[locale]/` all UI routes. Root `layout.tsx` validates locale and provides `NextIntlClientProvider`.
-  - `page.tsx` home page (`WelcomeSlides` carousel).
+  - `page.tsx` home page (`WelcomeSlides` carousel, `SlidesCarousel` client leaf, `SlideDots`).
   - Add public pages as route groups (for example `(marketing)/`) and protected pages under `(auth)/dashboard/` (protected by `src/proxy.ts`).
   - Auth pages (sign in, sign up) are not implemented yet; the proxy redirects unauthenticated users to `/sign-in`. Create them under a new `(auth)`-style public route group when a ticket asks (see section 5, recipe 2).
 - `src/app/api/` route handlers, only for external consumers, webhooks or non-form HTTP clients. Not locale-prefixed.
@@ -62,9 +62,9 @@ Rules for implementing tickets that contain only Figma designs and no technical 
 - `src/libs/` third-party wiring and singletons (`DB.ts`, `Env.ts`, `Logger.ts`, `Arcjet.ts`, `SupabaseServer.ts`, `I18n*.ts`). PascalCase files.
 - `src/models/Schema.ts` the single Drizzle schema file; `src/models/Seed.ts` deterministic seed data for every table.
 - `src/validations/<Name>Validation.ts` Zod schemas, exported as `<Name>Validation`.
-- `src/utils/` pure helpers and config (`AppConfig.ts`, `Helpers.ts`, `DBConnection.ts`, `Cn.ts` with `cn()`).
+- `src/utils/` pure helpers and config (`AppConfig.ts`, `Helpers.ts`, `DBConnection.ts`, `Cn.ts` with `cn()`, `Slides.ts` with `getActiveSlideIndex`).
 - `src/types/` shared types (`I18n.ts`).
-- `src/locales/{en,fr}.json` message catalogs.
+- `src/locales/{en,nb}.json` message catalogs.
 - `src/styles/global.css` Tailwind entry, shadcn theme variables and design tokens.
 - `src/hooks/` (create if needed) client hooks; tests for hooks run in the `ui` project.
 - `migrations/` generated SQL; never hand-edit.
@@ -146,7 +146,7 @@ Rules for implementing tickets that contain only Figma designs and no technical 
 
 - Config: `src/libs/I18n.ts`, routing in `src/libs/I18nRouting.ts`, locales in `AppConfig.i18n`. Server `getTranslations({ locale, namespace })`, client `useTranslations(namespace)`.
 - Keys in `src/locales/en.json` are namespaced by component or page (`DashboardLayout`, `IndexPage`); page namespaces end with `Page`. Keys are snake_case and context-specific (`meta_title`, `button_increment`, `error_increment_range`). Use ICU placeholders (`{year}`), `t.rich` for markup, and plural syntax for counts.
-- Add every key to all locale files (`en.json` and `fr.json`) in the same change, then run `check:i18n` (detects missing, unused, invalid keys). Crowdin syncs translations later; still provide a real French string, not a copy of English.
+- Add every key to all locale files (`en.json` and `nb.json`) in the same change, then run `check:i18n` (detects missing, unused, invalid keys). Crowdin syncs translations later; still provide a real Norwegian Bokmål string, not a copy of English.
 - Format dates, numbers, currency with `useFormatter` / `getFormatter`, never `toLocaleString` with hard-coded locales.
 - Add a new locale: update `AppConfig.i18n.locales`, create `src/locales/<code>.json`, update `crowdin.yml` if needed.
 - Client components receive messages through the root `NextIntlClientProvider`; do not pass a custom `messages` subset.
@@ -192,6 +192,7 @@ Source: Figma GroceryApp, Colors and Typography frames. Font: Poppins via `next/
 | `--color-text-tertiary` | #6F6F6F | variable tertiary |
 | `--color-link` | #407EC7 | link |
 | `--color-divider` | #DADCE0 | variable divider |
+| `--color-pointer-inactive` | #DCDCDC | pointers (inactive bullet) |
 | `--foreground` | #202124 | variable primary (heading text) |
 | `--background`, `--card`, `--popover` | #FFFFFF | background |
 | `--primary` | #6CC51D | primary-dark |
@@ -259,7 +260,7 @@ Open design questions:
 1. Create `src/app/[locale]/(marketing)/<route>/page.tsx`.
 2. Default export `<Name>Page`, `params: Promise<{ locale: string }>`, await, `setRequestLocale(locale)`.
 3. Add `generateMetadata` with `getTranslations({ locale, namespace: '<Name>Page' })` (`meta_title`, `meta_description`).
-4. Add all copy to `en.json` and `fr.json` under `<Name>Page`; link with `Link` from `@/libs/I18nNavigation`.
+4. Add all copy to `en.json` and `nb.json` under `<Name>Page`; link with `Link` from `@/libs/I18nNavigation`.
 5. Add to `src/app/sitemap.ts` if indexable. Add an e2e smoke test.
 
 ### 5.2 Add a protected dashboard page
@@ -282,7 +283,7 @@ Open design questions:
 5. Add an integration test (`tests/integration`).
 
 ### 5.5 Add translations
-1. Add keys to `src/locales/en.json` under the right namespace, then the same keys to `fr.json`.
+1. Add keys to `src/locales/en.json` under the right namespace, then the same keys to `nb.json`.
 2. Use `getTranslations` (server) or `useTranslations` (client); `t.rich` for markup.
 3. Run `check:i18n`.
 

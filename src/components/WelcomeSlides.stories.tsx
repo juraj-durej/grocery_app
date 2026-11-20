@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { NextIntlClientProvider } from 'next-intl';
 import enMessages from '@/locales/en.json';
-import frMessages from '@/locales/fr.json';
+import nbMessages from '@/locales/nb.json';
 import { StoryAppRouter } from './StoryAppRouter';
 import { WelcomeSlides } from './WelcomeSlides';
 
@@ -29,11 +29,11 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
-/** French headings are longer and wrap to more lines. */
-export const French: Story = {
+/** Norwegian headings are longer and wrap to more lines. */
+export const Norwegian: Story = {
   decorators: [
     (Story) => (
-      <NextIntlClientProvider locale="fr" messages={frMessages}>
+      <NextIntlClientProvider locale="nb" messages={nbMessages}>
         <Story />
       </NextIntlClientProvider>
     ),

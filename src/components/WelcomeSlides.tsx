@@ -1,5 +1,6 @@
 import { useTranslations } from 'next-intl';
 import { GetStartedButton } from '@/components/GetStartedButton';
+import { SlidesCarousel } from '@/components/SlidesCarousel';
 import { WelcomeSlide } from '@/components/WelcomeSlide';
 
 const CAROUSEL_ID = 'welcome-slides';
@@ -38,16 +39,7 @@ export function WelcomeSlides() {
 
   return (
     <>
-      {/* Scrollbar hidden through arbitrary properties so the carousel stays scrollable by touch and keyboard. */}
-      <main
-        id={CAROUSEL_ID}
-        aria-roledescription="carousel"
-        aria-label={t('slides_label')}
-        // Keyboard-scrollable region with no interactive children, so it must be focusable itself.
-        // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-        tabIndex={0}
-        className="flex h-dvh snap-x snap-mandatory [scrollbar-width:none] overflow-x-auto focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-inset motion-safe:scroll-smooth [&::-webkit-scrollbar]:hidden"
-      >
+      <SlidesCarousel id={CAROUSEL_ID} label={t('slides_label')} count={slides.length}>
         {slides.map((slide, index) => (
           <WelcomeSlide
             key={slide.photoSrc}
@@ -58,7 +50,7 @@ export function WelcomeSlides() {
             total={slides.length}
           />
         ))}
-      </main>
+      </SlidesCarousel>
       <GetStartedButton carouselId={CAROUSEL_ID} total={slides.length} />
     </>
   );

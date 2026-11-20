@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { NextIntlClientProvider } from 'next-intl';
 import enMessages from '@/locales/en.json';
-import frMessages from '@/locales/fr.json';
+import nbMessages from '@/locales/nb.json';
 import { GetStartedButton } from './GetStartedButton';
 import { StoryAppRouter } from './StoryAppRouter';
 
@@ -30,11 +30,11 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
-/** The label comes from the French messages. */
-export const French: Story = {
+/** The label comes from the Norwegian messages. */
+export const Norwegian: Story = {
   decorators: [
     (Story) => (
-      <NextIntlClientProvider locale="fr" messages={frMessages}>
+      <NextIntlClientProvider locale="nb" messages={nbMessages}>
         <Story />
       </NextIntlClientProvider>
     ),
