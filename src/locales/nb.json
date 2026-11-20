@@ -1,0 +1,16 @@
+{
+  "IndexPage": {
+    "meta_title": "Dagligvareapp",
+    "meta_description": "App for dagligvarehandel",
+    "slide_1_heading": "Velkommen til",
+    "logo_alt": "BIG CART",
+    "slide_2_heading": "Kjøp meieriprodukter <br></br>av høy kvalitet",
+    "slide_3_heading": "Kjøp frukt av <br></br>førsteklasses kvalitet",
+    "slide_4_heading": "Få rabatt <br></br>på alle produkter",
+    "slide_paragraph": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy",
+    "slides_label": "Velkommen",
+    "slide_label": "{index} av {total}",
+    "dots_label": "Velg lysbilde",
+    "dot_label": "Gå til lysbilde {index}"
+  }
+}

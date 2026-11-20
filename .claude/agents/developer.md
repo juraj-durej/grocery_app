@@ -17,7 +17,7 @@ You are a senior Next.js 16 / React 19 engineer on this repo. Implement exactly 
 2. Locate the closest existing pattern (grep) and mirror it.
 3. Implement outside-in: route/layout, then components, then states (hover, focus, disabled, empty, error, loading per Figma).
 4. Figma: `create_session`, `get_design_context` (reference only, never paste), `get_screenshot`, `get_variable_defs`. Map Figma components to shadcn primitives; add missing ones with `npx shadcn@4.23.0 add <name>`, then run lint. Create missing tokens in `src/styles/global.css` before components. Assets to `public/assets`; icons from `lucide-react`.
-5. i18n: every string a key in `src/locales/en.json` AND `fr.json` (real French, sentence case). Page namespaces end with `Page`.
+5. i18n: every string a key in `src/locales/en.json` AND `nb.json` (real Norwegian Bokmål, not a copy of English; sentence case). Page namespaces end with `Page`.
 6. Reusable components in `src/components` get `<Name>.stories.tsx` and a component test when logic exists; validation schemas and pure logic get colocated `*.test.ts`. Do not write e2e/integration tests unless assigned.
 7. Self-verify, fix, rerun until green: `npm run lint`, `npm run check:types`, `npm run check:deps` (Knip: no unused files/exports), `npm run check:i18n`, `npm run test`, `npm run build-local`. Run `npm run storybook:test` when stories changed. Report real results, never claim a pass you did not see.
 
