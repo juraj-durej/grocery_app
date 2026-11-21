@@ -1,4 +1,4 @@
-import { Field, FieldLabel } from '@/components/ui/field';
+import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 
 /**
@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
  * @param props.label - The accessible label text.
  * @param props.icon - The decorative leading icon.
  * @param props.trailing - The optional decorative trailing icon.
+ * @param props.error - The optional translated error shown under the input.
  * @returns The field element.
  */
 export function AuthField(
@@ -15,12 +16,14 @@ export function AuthField(
     label: string;
     icon: React.ReactNode;
     trailing?: React.ReactNode;
+    error?: string;
   } & Omit<React.ComponentProps<typeof Input>, 'className'>,
 ) {
-  const { label, icon, trailing, ...inputProps } = props;
+  const { label, icon, trailing, error, ...inputProps } = props;
+  const errorId = `${inputProps.name}-error`;
 
   return (
-    <Field className="mx-auto w-full max-w-95">
+    <Field className="mx-auto w-full max-w-95" data-invalid={error ? true : undefined}>
       <FieldLabel htmlFor={inputProps.name} className="sr-only">
         {label}
       </FieldLabel>
@@ -33,6 +36,8 @@ export function AuthField(
         </span>
         <Input
           id={inputProps.name}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={error ? errorId : undefined}
           {...inputProps}
           className="h-15 rounded-button border-0 bg-white pr-16 pl-18 text-paragraph-1 text-text-strong shadow-none placeholder:text-text-secondary focus-visible:ring-ring md:text-paragraph-1"
         />
@@ -45,6 +50,7 @@ export function AuthField(
           </span>
         )}
       </div>
+      {error && <FieldError id={errorId}>{error}</FieldError>}
     </Field>
   );
 }

@@ -30,6 +30,7 @@ Rules for implementing tickets that contain only Figma designs and no technical 
 | Language | TypeScript 7, strict | `tsconfig.json` | `@/*` imports; no `any` |
 | Styling | Tailwind CSS 4.3 (CSS-first) | `src/styles/global.css` | Utilities only; shadcn semantic CSS variables in `:root`/`.dark` mapped via `@theme inline` |
 | Auth | Supabase Auth via `@supabase/ssr` 0.12 | `src/libs/SupabaseServer.ts`, `src/proxy.ts`, `src/actions/AuthActions.ts` | `getUser()` for authorization, never `getSession()` |
+| Client state | Zustand 5.1 (`persist` middleware) | `src/stores/AppStore.ts` | Client components only; session tokens in memory only |
 | Database | Postgres + Drizzle ORM 0.45 / drizzle-kit 0.31 (`pg`); PGlite locally (socket) or in-process in-memory PGlite (`DB_MODE=pglite`, Vercel) | `src/models/Schema.ts`, `src/models/Seed.ts`, `src/libs/DB.ts`, `src/utils/DBConnection.ts`, `migrations/` | Server-only; generate + migrate, never push |
 | Validation | Zod 4.4 | `src/validations` | One schema shared by client and server |
 | Component library | shadcn/ui 4.23 CLI (style `radix-vega`, `radix-ui` 1.8 primitives, `class-variance-authority` 0.7, `tailwind-merge` 3.7 + `clsx` 2.1 via `cn`, `tw-animate-css`) | `src/components/ui`, `components.json`, `src/utils/Cn.ts` | Generated primitives; compose, do not rebuild; variants via CVA |
@@ -52,7 +53,7 @@ Rules for implementing tickets that contain only Figma designs and no technical 
 - `src/app/[locale]/` all UI routes. Root `layout.tsx` validates locale and provides `NextIntlClientProvider`.
   - `page.tsx` home page (`WelcomeSlides` carousel, `SlidesCarousel` client leaf, `SlideDots`).
   - Add public pages as route groups (for example `(marketing)/`) and protected pages under `(auth)/dashboard/` (protected by `src/proxy.ts`).
-  - `welcome/`, `sign-up/`, `sign-in/` public auth screens (`AuthScreen` layout). `/sign-in` is minimal (hero + heading); `/sign-up` renders the form UI (email, phone, password, Signup button; submit/validation pending TASK-65). The proxy redirects unauthenticated users to `/sign-in`.
+  - `welcome/`, `sign-up/`, `sign-in/` public auth screens (`AuthScreen` layout). `/sign-in` is minimal (hero + heading); `/sign-up` renders the working sign-up form (email, phone, password, Signup button; validation and Supabase sign-up implemented in TASK-65). The proxy redirects unauthenticated users to `/sign-in`.
 - `src/app/api/` route handlers, only for external consumers, webhooks or non-form HTTP clients. Not locale-prefixed.
 - `src/app/{robots,sitemap}.ts`, `global-error.tsx` app-level special files.
 - `src/actions/` server actions, one file per domain: `AuthActions.ts`, `<Domain>Actions.ts`.
@@ -60,7 +61,8 @@ Rules for implementing tickets that contain only Figma designs and no technical 
 - `src/components/` app components composed from `ui/` primitives, one component per PascalCase file (e.g. `ProductCard.tsx`). Subfolders only when a component has parts.
 - `src/templates/` page-level shells composed from components (none yet).
 - `src/libs/` third-party wiring and singletons (`DB.ts`, `Env.ts`, `Logger.ts`, `Arcjet.ts`, `SupabaseServer.ts`, `I18n*.ts`). PascalCase files.
-- `src/models/Schema.ts` the single Drizzle schema file; `src/models/Seed.ts` deterministic seed data for every table.
+- `src/models/Schema.ts` the single Drizzle schema file; `src/models/Seed.ts` deterministic seed data for every table; `src/models/Users.ts` server-only `saveUser` upsert of the Supabase user.
+- `src/stores/` Zustand client stores (`AppStore.ts`: auth user and session). PascalCase files.
 - `src/validations/<Name>Validation.ts` Zod schemas, exported as `<Name>Validation`.
 - `src/utils/` pure helpers and config (`AppConfig.ts`, `Helpers.ts`, `DBConnection.ts`, `Cn.ts` with `cn()`, `Slides.ts` with `getActiveSlideIndex`).
 - `src/types/` shared types (`I18n.ts`).
@@ -117,6 +119,14 @@ Rules for implementing tickets that contain only Figma designs and no technical 
 - Client-side Supabase (`createBrowserClient`) is not set up. Add `src/libs/SupabaseBrowser.ts` only if a ticket needs realtime or client-only auth, using the same env vars.
 - Business data lives in Postgres via Drizzle, not Supabase tables via supabase-js. Link rows to the user with a `userId` uuid column holding `auth.users.id`.
 - Double-check each protected page/action: the proxy is a first gate; actions must still call `getUser()` and reject when null.
+
+### 4.4.1 Client state (Zustand)
+
+- `useAppStore` from `@/stores/AppStore` currently holds only the auth data (`user`, `session`) returned from Supabase at register. Use it in client components only; never import it in Server Components, actions or `proxy.ts`.
+- Persisted to localStorage (`grocery-app-store`) via `partialize`: `user`. Access/refresh tokens (`session`) stay in memory only and are never persisted.
+- The server stays the source of truth: authorize with `getUser()`, never trust the store. Clear it with `clearAuth()` on sign-out.
+- Server actions return data (not `redirect()`) when the client must put it into the store (e.g. `signUp`); the client then navigates with `useRouter` from `@/libs/I18nNavigation`.
+- Keep pure store logic in separate files with co-located unit tests.
 
 ### 4.5 Drizzle and Postgres
 

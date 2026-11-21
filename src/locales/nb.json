@@ -39,7 +39,16 @@
     "password_label": "Passord",
     "password_placeholder": "Passord",
     "signup_button": "Registrer deg",
-    "login_prompt": "Har du allerede en konto? <login>Logg inn</login>"
+    "login_prompt": "Har du allerede en konto? <login>Logg inn</login>",
+    "show_password": "Vis passord",
+    "hide_password": "Skjul passord",
+    "error_email_invalid": "Skriv inn en gyldig e-postadresse",
+    "error_phone_invalid": "Skriv inn et gyldig telefonnummer",
+    "error_password_too_short": "Passordet må ha minst 8 tegn",
+    "error_password_too_long": "Passordet kan ha maks 72 tegn",
+    "error_email_taken": "Denne e-postadressen er allerede registrert",
+    "error_signup_failed": "Kunne ikke opprette konto",
+    "confirm_email_message": "Sjekk e-posten din for å bekrefte kontoen"
   },
   "SignInPage": {
     "meta_title": "Logg inn",
@@ -58,5 +67,14 @@
     "forgot_password": "Glemt passord",
     "login_button": "Logg inn",
     "sign_up_prompt": "Har du ikke en konto? <signup>Registrer deg</signup>"
+  },
+  "DashboardLayout": {
+    "meta_title": "Hjem",
+    "meta_description": "Hjem i dagligvareappen"
+  },
+  "DashboardPage": {
+    "heading": "Hjem",
+    "signed_in_as": "Logget inn som {email}",
+    "sign_out_button": "Logg ut"
   }
 }

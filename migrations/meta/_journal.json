@@ -15,6 +15,13 @@
       "when": 1795125758833,
       "tag": "0001_drop-counter",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795260469420,
+      "tag": "0002_curious_prodigy",
+      "breakpoints": true
     }
   ]
 }
