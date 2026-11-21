@@ -1,5 +1,6 @@
 import { ArrowLeft } from 'lucide-react';
 import Image from 'next/image';
+import { HistoryBackButton } from '@/components/HistoryBackButton';
 import { Link } from '@/libs/I18nNavigation';
 import { cn } from '@/utils/Cn';
 
@@ -8,7 +9,8 @@ import { cn } from '@/utils/Cn';
  * @param props - Component props.
  * @param props.photoSrc - Hero photo path.
  * @param props.photoClassName - Static classes placing the photo crop box (offset and width) on mobile.
- * @param props.backHref - Target of the back link.
+ * @param props.backHref - Target of the back link, or the fallback when `historyBack` is set.
+ * @param props.historyBack - Goes back in browser history instead of linking to `backHref`.
  * @param props.backLabel - Accessible label of the back link.
  * @param props.titleBar - Text centered in the title bar.
  * @param props.sheetClassName - Static classes for the sheet height and top padding.
@@ -19,6 +21,7 @@ export function AuthScreen(props: {
   photoSrc: string;
   photoClassName: string;
   backHref: string;
+  historyBack?: boolean;
   backLabel: string;
   titleBar: string;
   sheetClassName: string;
@@ -45,13 +48,17 @@ export function AuthScreen(props: {
         </div>
         <div className="absolute inset-x-0 top-0 h-32.75 bg-linear-to-b from-black to-transparent" />
         <header className="absolute inset-x-0 top-13.5 flex h-11 items-center justify-center">
-          <Link
-            href={props.backHref}
-            aria-label={props.backLabel}
-            className="absolute left-1.5 flex size-11 items-center justify-center rounded-button text-white outline-none focus-visible:ring-3 focus-visible:ring-ring"
-          >
-            <ArrowLeft aria-hidden className="size-6" />
-          </Link>
+          {props.historyBack ? (
+            <HistoryBackButton fallbackHref={props.backHref} label={props.backLabel} />
+          ) : (
+            <Link
+              href={props.backHref}
+              aria-label={props.backLabel}
+              className="absolute left-1.5 flex size-11 items-center justify-center rounded-button text-white outline-none focus-visible:ring-3 focus-visible:ring-ring"
+            >
+              <ArrowLeft aria-hidden className="size-6" />
+            </Link>
+          )}
           <p aria-hidden className="text-toolbar text-white">
             {props.titleBar}
           </p>
