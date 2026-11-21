@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { routing } from '@/libs/I18nRouting';
-import { getI18nPath } from './Helpers';
+import { formatPrice, getI18nPath } from './Helpers';
 
 describe('Helpers', () => {
   describe('I18n path helper', () => {
@@ -16,6 +16,20 @@ describe('Helpers', () => {
       const locale = 'fr';
 
       expect(getI18nPath(url, locale)).toBe(`/fr${url}`);
+    });
+  });
+
+  describe('price formatting', () => {
+    it('formats whole dollars with two decimals', () => {
+      expect(formatPrice(800)).toBe('$8.00');
+    });
+
+    it('formats cents with two decimals', () => {
+      expect(formatPrice(209)).toBe('$2.09');
+    });
+
+    it('formats zero', () => {
+      expect(formatPrice(0)).toBe('$0.00');
     });
   });
 });

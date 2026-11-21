@@ -26,3 +26,10 @@ export const getI18nPath = (url: string, locale: string) => {
 
   return `/${locale}${url}`;
 };
+
+/**
+ * Formats a price in cents as a dollar amount.
+ * @param cents The price in cents.
+ * @returns The price with a dollar sign and two decimals, e.g. `$8.00`.
+ */
+export const formatPrice = (cents: number) => `$${(cents / 100).toFixed(2)}`;

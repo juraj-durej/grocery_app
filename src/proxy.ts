@@ -5,6 +5,7 @@ import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import arcjet from '@/libs/Arcjet';
 import { Env } from '@/libs/Env';
+import { SHOP_SESSION_COOKIE, SHOP_SESSION_COOKIE_OPTIONS } from '@/libs/ShopSession';
 import { routing } from './libs/I18nRouting';
 
 const handleI18nRouting = createMiddleware(routing);
@@ -42,7 +43,17 @@ export default async function proxy(request: NextRequest) {
     }
   }
 
+  // Issue the anonymous shop session up front so concurrent server actions share it.
+  // Set on the request before i18n routing so the same request's render sees it.
+  const newSessionId = request.cookies.has(SHOP_SESSION_COOKIE) ? undefined : crypto.randomUUID();
+  if (newSessionId) {
+    request.cookies.set(SHOP_SESSION_COOKIE, newSessionId);
+  }
+
   const response = handleI18nRouting(request);
+  if (newSessionId) {
+    response.cookies.set(SHOP_SESSION_COOKIE, newSessionId, SHOP_SESSION_COOKIE_OPTIONS);
+  }
 
   if (!isProtectedRoute(request)) {
     return response;
@@ -71,7 +82,12 @@ export default async function proxy(request: NextRequest) {
   if (!user) {
     const locale = request.nextUrl.pathname.match(/(\/.*)\/dashboard/u)?.at(1) ?? '';
 
-    return NextResponse.redirect(new URL(`${locale}/sign-in`, request.url));
+    const redirect = NextResponse.redirect(new URL(`${locale}/sign-in`, request.url));
+    if (newSessionId) {
+      redirect.cookies.set(SHOP_SESSION_COOKIE, newSessionId, SHOP_SESSION_COOKIE_OPTIONS);
+    }
+
+    return redirect;
   }
 
   return response;
