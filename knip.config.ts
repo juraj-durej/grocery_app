@@ -1,8 +1,9 @@
 import type { KnipConfig } from 'knip';
 
 const config: KnipConfig = {
-  // shadcn/ui primitives are installed ahead of use, treat them as entry points
-  entry: ['src/components/ui/**/*.tsx'],
+  // shadcn/ui primitives are installed ahead of use, treat them as entry points;
+  // the Storybook action mock is aliased in .storybook/main.ts
+  entry: ['src/components/ui/**/*.tsx', '.storybook/AuthActions.mock.ts'],
   // Files to exclude from Knip analysis
   ignore: [
     'src/libs/I18n.ts',
