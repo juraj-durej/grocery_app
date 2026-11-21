@@ -1,5 +1,6 @@
 import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
+import { hasCustomAccount, hasLiveSupabase, testEmail, testPassword } from './helpers/auth';
 
 const copyByLocale = {
   en: {
@@ -35,16 +36,6 @@ const copyByLocale = {
 };
 
 type Copy = (typeof copyByLocale)['en'];
-
-const testEmail = process.env.E2E_USER_EMAIL ?? 'anna.novak@example.com';
-const testPassword = process.env.E2E_USER_PASSWORD ?? 'Groceries123';
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-const hasLiveSupabase =
-  Boolean(supabaseKey) &&
-  supabaseKey !== 'dummy_supabase_publishable_key' &&
-  supabaseKey !== 'your_supabase_publishable_key' &&
-  process.env.NEXT_PUBLIC_SUPABASE_URL !== 'http://127.0.0.1:54321';
-const hasCustomAccount = Boolean(process.env.E2E_USER_EMAIL && process.env.E2E_USER_PASSWORD);
 
 // Clicks before hydration are no-ops, so retry the submit until the form reacts.
 const submitLogin = async (page: Page, copy: Copy, expectation: () => Promise<void>) => {

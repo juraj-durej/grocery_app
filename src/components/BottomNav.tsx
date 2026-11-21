@@ -26,9 +26,9 @@ export const BottomNav = () => {
         className="absolute inset-0 size-full object-fill drop-shadow-nav"
       />
       <Link
-        href="/home"
+        href="/dashboard"
         aria-label={t('home')}
-        className={cn(linkClass, 'nav-slot-1', color('/home'))}
+        className={cn(linkClass, 'nav-slot-1', color('/dashboard'))}
       >
         <HomeIcon className="h-5.25 w-5.5" />
       </Link>

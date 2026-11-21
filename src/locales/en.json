@@ -81,16 +81,8 @@
     "back_label": "Back to login",
     "heading": "Forgot Password"
   },
-  "DashboardLayout": {
-    "meta_title": "Home",
-    "meta_description": "Your grocery app home"
-  },
-  "DashboardPage": {
-    "heading": "Home",
-    "signed_in_as": "Signed in as {email}",
-    "sign_out_button": "Sign out"
-  },
   "HomePage": {
+    "heading": "Home",
     "meta_title": "Home",
     "meta_description": "Fresh groceries delivered to your door.",
     "categories_title": "Categories",
@@ -142,7 +134,9 @@
   },
   "AccountPage": {
     "title": "Account",
-    "placeholder_text": "Your account details will appear here."
+    "placeholder_text": "Your account details will appear here.",
+    "signed_in_as": "Signed in as {email}",
+    "sign_out_button": "Sign out"
   },
   "FavoritesPage": {
     "title": "Favorites",

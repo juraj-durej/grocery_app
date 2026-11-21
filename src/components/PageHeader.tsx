@@ -8,7 +8,7 @@ export const PageHeader = async (props: { title: string; backHref?: string }) =>
   return (
     <header className="relative flex h-14 items-center justify-center px-4">
       <Link
-        href={props.backHref ?? '/home'}
+        href={props.backHref ?? '/dashboard'}
         aria-label={t('back')}
         className="absolute left-2 flex size-11 items-center justify-center"
       >

@@ -7,13 +7,15 @@ import { PromoCarousel } from '@/components/PromoCarousel';
 import { SearchBar } from '@/components/SearchBar';
 import { SectionTitle } from '@/components/SectionTitle';
 import { getCategories, getFeaturedProducts } from '@/libs/Catalog';
+import { redirect } from '@/libs/I18nNavigation';
 import { getCartQuantities, getFavoriteProductIds } from '@/libs/ShopState';
+import { createSupabaseServerClient } from '@/libs/SupabaseServer';
 
-type HomePageProps = {
+type DashboardPageProps = {
   params: Promise<{ locale: string }>;
 };
 
-export async function generateMetadata(props: HomePageProps): Promise<Metadata> {
+export async function generateMetadata(props: DashboardPageProps): Promise<Metadata> {
   const { locale } = await props.params;
   const t = await getTranslations({ locale, namespace: 'HomePage' });
 
@@ -23,10 +25,22 @@ export async function generateMetadata(props: HomePageProps): Promise<Metadata> 
   };
 }
 
-export default async function HomePage(props: HomePageProps) {
+export default async function DashboardPage(props: DashboardPageProps) {
   const { locale } = await props.params;
   setRequestLocale(locale);
   await connection();
+
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect({ href: '/sign-in', locale });
+
+    return null;
+  }
+
   const t = await getTranslations({ locale, namespace: 'HomePage' });
 
   const [categories, products, quantities, favoriteIds] = await Promise.all([
@@ -38,6 +52,7 @@ export default async function HomePage(props: HomePageProps) {
 
   return (
     <>
+      <h1 className="sr-only">{t('heading')}</h1>
       <div className="px-4.25 pt-4">
         <SearchBar />
         <div className="mt-2.5">

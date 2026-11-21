@@ -81,16 +81,8 @@
     "back_label": "Tilbake til innlogging",
     "heading": "Glemt passord"
   },
-  "DashboardLayout": {
-    "meta_title": "Hjem",
-    "meta_description": "Hjem i dagligvareappen"
-  },
-  "DashboardPage": {
-    "heading": "Hjem",
-    "signed_in_as": "Logget inn som {email}",
-    "sign_out_button": "Logg ut"
-  },
   "HomePage": {
+    "heading": "Hjem",
     "meta_title": "Hjem",
     "meta_description": "Ferske dagligvarer levert til døren.",
     "categories_title": "Kategorier",
@@ -142,7 +134,9 @@
   },
   "AccountPage": {
     "title": "Konto",
-    "placeholder_text": "Kontoopplysningene dine vises her."
+    "placeholder_text": "Kontoopplysningene dine vises her.",
+    "signed_in_as": "Logget inn som {email}",
+    "sign_out_button": "Logg ut"
   },
   "FavoritesPage": {
     "title": "Favoritter",

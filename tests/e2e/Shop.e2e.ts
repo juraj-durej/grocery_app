@@ -1,5 +1,6 @@
 import type { Locator, Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
+import { hasLiveSupabase, signInThroughForm } from './helpers/auth';
 
 const featured = [
   { name: 'Fresh Peach', price: '$8.00', unit: 'dozen', badge: null },
@@ -24,9 +25,31 @@ const clickAndSettle = async (page: Page, button: Locator) => {
 const card = (page: Page, name: string) =>
   page.getByRole('article').filter({ hasText: name }).first();
 
-test.describe('Shop home', () => {
+const expectFeaturedCards = async (page: Page) => {
+  const cards = page.getByRole('article');
+
+  await expect(cards).toHaveCount(featured.length);
+
+  await Promise.all(
+    featured.map(async (product, index) => {
+      const current = cards.nth(index);
+
+      await expect(current).toContainText(product.name);
+      await expect(current).toContainText(product.price);
+      await expect(current).toContainText(product.unit);
+
+      if (product.badge) {
+        await expect(current).toContainText(product.badge);
+      }
+    }),
+  );
+};
+
+test.describe('Shop home (authenticated)', () => {
+  test.skip(!hasLiveSupabase, 'Needs a live Supabase project (set NEXT_PUBLIC_SUPABASE_* secrets)');
+
   test.beforeEach(async ({ page }) => {
-    await page.goto('/home');
+    await signInThroughForm(page);
   });
 
   test.describe('Layout', () => {
@@ -52,27 +75,11 @@ test.describe('Shop home', () => {
     });
 
     test('lists six featured products in design order', async ({ page }) => {
-      const cards = page.getByRole('article');
-
-      await expect(cards).toHaveCount(featured.length);
-
-      await Promise.all(
-        featured.map(async (product, index) => {
-          const current = cards.nth(index);
-
-          await expect(current).toContainText(product.name);
-          await expect(current).toContainText(product.price);
-          await expect(current).toContainText(product.unit);
-
-          if (product.badge) {
-            await expect(current).toContainText(product.badge);
-          }
-        }),
-      );
+      await expectFeaturedCards(page);
     });
   });
 
-  test.describe('Search', () => {
+  test.describe('Navigation', () => {
     test('opens search from the search bar', async ({ page }) => {
       await page.getByRole('link', { name: 'Search keywords..' }).click();
 
@@ -84,9 +91,7 @@ test.describe('Shop home', () => {
 
       await expect(page).toHaveURL(/\/filter$/u);
     });
-  });
 
-  test.describe('Categories', () => {
     test('opens the categories page from the section title', async ({ page }) => {
       await page.getByRole('heading', { name: 'Categories' }).getByRole('link').click();
 
@@ -98,7 +103,6 @@ test.describe('Shop home', () => {
 
       await expect(page).toHaveURL(/\/categories\/fruits$/u);
       await expect(page.getByRole('heading', { level: 1, name: 'Fruits' })).toBeVisible();
-      await expect(card(page, 'Fresh Peach')).toBeVisible();
     });
 
     test('opens the household list from the last category after scrolling', async ({ page }) => {
@@ -108,6 +112,41 @@ test.describe('Shop home', () => {
       await household.click();
 
       await expect(page).toHaveURL(/\/categories\/household$/u);
+      await expect(page.getByRole('heading', { level: 1, name: 'Household' })).toBeVisible();
+    });
+
+    test('opens the cart from the green cart button', async ({ page }) => {
+      await page.getByRole('link', { name: 'Cart' }).first().click();
+
+      await expect(page).toHaveURL(/\/cart$/u);
+    });
+  });
+});
+
+test.describe('Shop featured products', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/featured');
+  });
+
+  test.describe('Layout', () => {
+    test('lists six featured products in design order', async ({ page }) => {
+      await expectFeaturedCards(page);
+    });
+  });
+
+  test.describe('Categories', () => {
+    test('opens the fruits list with its products', async ({ page }) => {
+      await page.goto('/categories');
+      await page.getByRole('link', { name: 'Fruits' }).click();
+
+      await expect(page).toHaveURL(/\/categories\/fruits$/u);
+      await expect(page.getByRole('heading', { level: 1, name: 'Fruits' })).toBeVisible();
+      await expect(card(page, 'Fresh Peach')).toBeVisible();
+    });
+
+    test('opens the household list', async ({ page }) => {
+      await page.goto('/categories/household');
+
       await expect(page.getByRole('heading', { level: 1, name: 'Household' })).toBeVisible();
     });
   });
@@ -165,9 +204,9 @@ test.describe('Shop home', () => {
       await expect(page).toHaveURL(/\/favorites$/u);
       await expect(card(page, 'Black Grapes')).toBeVisible();
 
-      await page.getByRole('link', { name: 'Home' }).click();
+      await page.goBack();
 
-      await expect(page).toHaveURL(/\/home$/u);
+      await expect(page).toHaveURL(/\/featured$/u);
 
       const homeGrapes = card(page, 'Black Grapes');
       const remove = homeGrapes.getByRole('button', { name: 'Remove from favorites' });
@@ -197,10 +236,29 @@ test.describe('Shop home', () => {
   });
 
   test.describe('Bottom navigation', () => {
+    test('links Home to the dashboard', async ({ page }) => {
+      await expect(page.getByRole('link', { name: 'Home' })).toHaveAttribute(
+        'href',
+        /\/dashboard$/u,
+      );
+    });
+
     test('opens the account page', async ({ page }) => {
       await page.getByRole('link', { name: 'Account' }).click();
 
       await expect(page).toHaveURL(/\/account$/u);
+    });
+
+    test('opens the favorites page', async ({ page }) => {
+      await page.getByRole('link', { name: 'Favorites' }).click();
+
+      await expect(page).toHaveURL(/\/favorites$/u);
+    });
+
+    test('opens the cart page', async ({ page }) => {
+      await page.getByRole('link', { name: 'Cart' }).click();
+
+      await expect(page).toHaveURL(/\/cart$/u);
     });
   });
 });

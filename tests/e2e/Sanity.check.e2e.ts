@@ -17,8 +17,8 @@ test.describe('Sanity', () => {
       ).toBeVisible();
     });
 
-    test('displays the shop home', async ({ page }) => {
-      await page.goto('/home');
+    test('displays the featured products', async ({ page }) => {
+      await page.goto('/featured');
 
       await expect(page.getByRole('heading', { name: 'Featured products' })).toBeVisible();
     });

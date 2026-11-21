@@ -12,8 +12,8 @@ test.describe('Visual testing', () => {
       await takeSnapshot(page, testInfo);
     });
 
-    test('takes a screenshot of the shop home', async ({ page }, testInfo) => {
-      await page.goto('/home');
+    test('takes a screenshot of the featured products', async ({ page }, testInfo) => {
+      await page.goto('/featured');
 
       await expect(page.getByRole('heading', { name: 'Featured products' })).toBeVisible();
 
