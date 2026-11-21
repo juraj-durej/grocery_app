@@ -11,7 +11,7 @@ Rules for implementing tickets that contain only Figma designs and no technical 
 - Do not introduce alternatives to the chosen stack:
   - Auth: no next-auth, Clerk, Auth0, `@supabase/auth-helpers-*`.
   - Data: no Prisma, TypeORM, Supabase query builder for app tables (use Drizzle), no axios/SWR/React Query for data a Server Component can load.
-  - Styling: no styled-components, Emotion, CSS modules, Sass, inline `style` for static values, or other UI kits (MUI, Chakra, Mantine, Ant Design, Bootstrap). shadcn/ui is the component library and `lucide-react` the icon library (no inline SVG icon set, no other icon packs).
+  - Styling: no styled-components, Emotion, CSS modules, Sass, inline `style` for static values, or other UI kits (MUI, Chakra, Mantine, Ant Design, Bootstrap). shadcn/ui is the component library and `lucide-react` the icon library (no inline SVG icon set, no other icon packs; auth field icons are an exception, see section 4 Icons bullet).
   - Forms and validation: no Formik, Yup, Joi, valibot.
   - i18n: no i18next, react-intl, hard-coded strings.
   - Logging: no `console.*` in app code (use LogTape).
@@ -33,7 +33,7 @@ Rules for implementing tickets that contain only Figma designs and no technical 
 | Database | Postgres + Drizzle ORM 0.45 / drizzle-kit 0.31 (`pg`); PGlite locally (socket) or in-process in-memory PGlite (`DB_MODE=pglite`, Vercel) | `src/models/Schema.ts`, `src/models/Seed.ts`, `src/libs/DB.ts`, `src/utils/DBConnection.ts`, `migrations/` | Server-only; generate + migrate, never push |
 | Validation | Zod 4.4 | `src/validations` | One schema shared by client and server |
 | Component library | shadcn/ui 4.23 CLI (style `radix-vega`, `radix-ui` 1.8 primitives, `class-variance-authority` 0.7, `tailwind-merge` 3.7 + `clsx` 2.1 via `cn`, `tw-animate-css`) | `src/components/ui`, `components.json`, `src/utils/Cn.ts` | Generated primitives; compose, do not rebuild; variants via CVA |
-| Icons | lucide-react 1.75 | imported where used | Only icon library |
+| Icons | lucide-react 1.75 | imported where used | Only icon library (auth field icon exception: see Icons bullet) |
 | Toasts | sonner 2.0 (shadcn `Toaster`) | `src/components/ui/sonner.tsx` | `toast()` from `sonner`; mount `<Toaster />` once in the root layout |
 | Forms | react-hook-form 7.85 + `@hookform/resolvers` 5.9 + shadcn `Field` | `src/components` | `zodResolver` with the shared schema; layout with `Field*` components (shadcn `form` is deprecated) |
 | i18n | next-intl 4.13 (`en`, `fr`; `as-needed` prefix) | `src/locales`, `src/libs/I18n*.ts` | Every string a key; update all locales |
@@ -52,7 +52,7 @@ Rules for implementing tickets that contain only Figma designs and no technical 
 - `src/app/[locale]/` all UI routes. Root `layout.tsx` validates locale and provides `NextIntlClientProvider`.
   - `page.tsx` home page (`WelcomeSlides` carousel, `SlidesCarousel` client leaf, `SlideDots`).
   - Add public pages as route groups (for example `(marketing)/`) and protected pages under `(auth)/dashboard/` (protected by `src/proxy.ts`).
-  - `welcome/`, `sign-up/`, `sign-in/` public auth screens (`AuthScreen` layout). `/sign-up` and `/sign-in` are minimal (hero + heading); the forms come in later tickets. The proxy redirects unauthenticated users to `/sign-in`.
+  - `welcome/`, `sign-up/`, `sign-in/` public auth screens (`AuthScreen` layout). `/sign-in` is minimal (hero + heading); `/sign-up` renders the form UI (email, phone, password, Signup button; submit/validation pending TASK-65). The proxy redirects unauthenticated users to `/sign-in`.
 - `src/app/api/` route handlers, only for external consumers, webhooks or non-form HTTP clients. Not locale-prefixed.
 - `src/app/{robots,sitemap}.ts`, `global-error.tsx` app-level special files.
 - `src/actions/` server actions, one file per domain: `AuthActions.ts`, `<Domain>Actions.ts`.
@@ -162,7 +162,7 @@ Rules for implementing tickets that contain only Figma designs and no technical 
 - Class names are static strings. For variants, use a typed lookup object; do not build classes dynamically (`bg-${x}`) because Tailwind cannot detect them. Prefer `gap`/`space-*` over margin hacks, `flex`/`grid` over absolute positioning, `rem`-based sizes.
 - Dark mode only if the design has it. Figma has no dark mode, so the `.dark` variable block was removed; `@custom-variant dark` stays only because shadcn components reference `dark:` classes. Dark mode is not designed.
 - Accessibility baseline: semantic landmarks (`header`, `nav`, `main`, `footer`), one `h1` per page, visible `focus-visible` styles, WCAG AA contrast, 44 px touch targets, `button` for actions and `a`/`Link` for navigation, labels for inputs, `aria-label` for icon-only controls, respect `prefers-reduced-motion`.
-- Icons: `lucide-react` only (`import { XIcon } from 'lucide-react'`); icon-only controls get `aria-label`. Use an inline SVG in `public/assets` only for brand artwork Lucide lacks.
+- Icons: `lucide-react` only (`import { XIcon } from 'lucide-react'`); icon-only controls get `aria-label`. Use an inline SVG in `public/assets` only for brand artwork Lucide lacks. Exception: auth form field icons (mail, phone, lock, eye, toggle) are Figma-exported SVGs in `public/assets/images/auth/icons/`, rendered with `next/image` (`alt=""`, `aria-hidden`). Interactive or icon-only controls still use lucide with an `aria-label`.
 
 ### 4.8.1 shadcn/ui
 
@@ -276,7 +276,7 @@ Open design questions:
 1. Create `src/app/[locale]/(auth)/dashboard/<route>/page.tsx`. The proxy already guards `/dashboard/*`; no metadata in the page (layout owns it).
 2. In the page, call `createSupabaseServerClient().auth.getUser()` when you need the user; scope all queries by `user.id`.
 3. When a dashboard layout exists, add a nav entry in `dashboard/layout.tsx` with a translated label (create the layout with the dashboard metadata if it does not exist yet).
-4. `/sign-up` and `/sign-in` exist as minimal public screens (hero + heading, no forms yet; `src/app/[locale]/sign-in/page.tsx`). When a ticket adds the forms, render them inside `AuthScreen` with actions in `AuthActions.ts`; `/sign-in` is the proxy redirect target and must not be under `/dashboard`.
+4. `/sign-up` has the form UI (no submit yet) and `/sign-in` is a minimal public screen (hero + heading; `src/app/[locale]/sign-in/page.tsx`). When a ticket adds the forms, render them inside `AuthScreen` with actions in `AuthActions.ts`; `/sign-in` is the proxy redirect target and must not be under `/dashboard`.
 
 ### 5.3 Add a form with a server action
 1. Schema: `src/validations/<Name>Validation.ts` (`z.object`, translated error keys).
@@ -305,7 +305,7 @@ Open design questions:
 ### 5.7 Implement a Figma screen
 1. Parse the ticket's Figma URL (`fileKey`, `node-id` with `-` replaced by `:`). Follow the Figma MCP flow: `create_session`, `get_design_context`, `get_screenshot`, `get_variable_defs`.
 2. Treat generated code as a reference only. First map each Figma component to a shadcn primitive in `src/components/ui` (add missing ones via the CLI) and set its variants/tokens to match Figma. Map the rest to this repo: theme variables and tokens in `global.css`, existing components (`src/components`, `src/templates`), `Link`/i18n helpers, no inline styles, no hard-coded text.
-3. Create missing tokens before components. Download needed assets to `public/assets`; icons come from `lucide-react`.
+3. Create missing tokens before components. Download needed assets to `public/assets`; icons come from `lucide-react` (auth field icon exception: see Icons bullet).
 4. Build from the outside in: route and layout, then components, then states (hover, focus, disabled, empty, error, loading) shown in Figma.
 5. Compare against the Figma screenshot at the designed breakpoints; fix spacing, typography and colors until they match. Check responsive behavior where Figma has no mobile frame.
 6. Run the definition of done.

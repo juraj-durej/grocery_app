@@ -16,10 +16,9 @@ const config: KnipConfig = {
   ignoreDependencies: [
     // Provides the pglite-server binary, invoked via `sh -c` so Knip can't detect it
     '@electric-sql/pglite-socket',
-    // Kept for upcoming features (forms, seed data, component tests)
+    // Kept for upcoming features (forms, component tests)
     '@hookform/resolvers',
     'react-hook-form',
-    '@faker-js/faker',
     'vitest-browser-react',
   ],
   // Include custom Playwright test file suffixes

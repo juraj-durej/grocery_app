@@ -30,7 +30,16 @@
     "title_bar": "Welcome",
     "back_label": "Back",
     "heading": "Create account",
-    "paragraph": "Quickly create account"
+    "paragraph": "Quickly create account",
+    "form_label": "Create account form",
+    "email_label": "Email address",
+    "email_placeholder": "Email address",
+    "phone_label": "Phone number",
+    "phone_placeholder": "Phone number",
+    "password_label": "Password",
+    "password_placeholder": "Password",
+    "signup_button": "Signup",
+    "login_prompt": "Already have an account ? <login>Login</login>"
   },
   "SignInPage": {
     "meta_title": "Login",

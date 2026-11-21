@@ -30,7 +30,16 @@
     "title_bar": "Velkommen",
     "back_label": "Tilbake",
     "heading": "Opprett konto",
-    "paragraph": "Opprett en konto raskt"
+    "paragraph": "Opprett en konto raskt",
+    "form_label": "Skjema for å opprette konto",
+    "email_label": "E-postadresse",
+    "email_placeholder": "E-postadresse",
+    "phone_label": "Telefonnummer",
+    "phone_placeholder": "Telefonnummer",
+    "password_label": "Passord",
+    "password_placeholder": "Passord",
+    "signup_button": "Registrer deg",
+    "login_prompt": "Har du allerede en konto? <login>Logg inn</login>"
   },
   "SignInPage": {
     "meta_title": "Logg inn",
