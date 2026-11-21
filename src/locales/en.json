@@ -66,7 +66,20 @@
     "remember_me": "Remember me",
     "forgot_password": "Forgot password",
     "login_button": "Login",
-    "sign_up_prompt": "Don’t have an account ? <signup>Sign up</signup>"
+    "sign_up_prompt": "Don’t have an account ? <signup>Sign up</signup>",
+    "form_label": "Login form",
+    "error_email_required": "Enter your email address",
+    "error_email_invalid": "Enter a valid email address",
+    "error_password_required": "Enter your password",
+    "error_invalid_credentials": "Incorrect email or password",
+    "error_login_failed": "Login failed"
+  },
+  "ForgotPasswordPage": {
+    "meta_title": "Password recovery",
+    "meta_description": "Recover access to your grocery app account",
+    "title_bar": "Password Recovery",
+    "back_label": "Back to login",
+    "heading": "Forgot Password"
   },
   "DashboardLayout": {
     "meta_title": "Home",
