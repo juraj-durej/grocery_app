@@ -38,6 +38,16 @@
     "title_bar": "Welcome",
     "back_label": "Back",
     "heading": "Welcome back !",
-    "paragraph": "Sign in to your account"
+    "paragraph": "Sign in to your account",
+    "email_label": "Email address",
+    "email_placeholder": "Email Address",
+    "password_label": "Password",
+    "password_placeholder": "Password",
+    "show_password": "Show password",
+    "hide_password": "Hide password",
+    "remember_me": "Remember me",
+    "forgot_password": "Forgot password",
+    "login_button": "Login",
+    "sign_up_prompt": "Don’t have an account ? <signup>Sign up</signup>"
   }
 }

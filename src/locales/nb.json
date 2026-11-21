@@ -38,6 +38,16 @@
     "title_bar": "Velkommen",
     "back_label": "Tilbake",
     "heading": "Velkommen tilbake!",
-    "paragraph": "Logg inn på kontoen din"
+    "paragraph": "Logg inn på kontoen din",
+    "email_label": "E-postadresse",
+    "email_placeholder": "E-postadresse",
+    "password_label": "Passord",
+    "password_placeholder": "Passord",
+    "show_password": "Vis passord",
+    "hide_password": "Skjul passord",
+    "remember_me": "Husk meg",
+    "forgot_password": "Glemt passord",
+    "login_button": "Logg inn",
+    "sign_up_prompt": "Har du ikke en konto? <signup>Registrer deg</signup>"
   }
 }
