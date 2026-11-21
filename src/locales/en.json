@@ -81,13 +81,70 @@
     "back_label": "Back to login",
     "heading": "Forgot Password"
   },
-  "DashboardLayout": {
-    "meta_title": "Home",
-    "meta_description": "Your grocery app home"
-  },
-  "DashboardPage": {
+  "HomePage": {
     "heading": "Home",
+    "meta_title": "Home",
+    "meta_description": "Fresh groceries delivered to your door.",
+    "categories_title": "Categories",
+    "featured_title": "Featured products"
+  },
+  "SearchBar": {
+    "placeholder": "Search keywords..",
+    "filter": "Filters"
+  },
+  "PromoCarousel": {
+    "label": "Promotions",
+    "go_to_slide": "Go to slide {number}",
+    "slide_1": "20% off on your first purchase",
+    "slide_2": "Free delivery on orders over $50",
+    "slide_3": "Fresh fruits every morning",
+    "slide_4": "Buy 2, get 1 free on beverages"
+  },
+  "ProductCard": {
+    "badge_new": "NEW",
+    "add_to_cart": "Add to cart",
+    "add_to_favorites": "Add to favorites",
+    "remove_from_favorites": "Remove from favorites",
+    "decrease_quantity": "Decrease quantity",
+    "increase_quantity": "Increase quantity"
+  },
+  "BottomNav": {
+    "label": "Main",
+    "home": "Home",
+    "account": "Account",
+    "favorites": "Favorites",
+    "cart": "Cart"
+  },
+  "PageHeader": {
+    "back": "Back"
+  },
+  "CategoriesPage": {
+    "title": "Categories"
+  },
+  "FeaturedPage": {
+    "title": "Featured products"
+  },
+  "SearchPage": {
+    "title": "Search",
+    "placeholder_text": "Search is coming soon."
+  },
+  "FilterPage": {
+    "title": "Filters",
+    "placeholder_text": "Filters are coming soon."
+  },
+  "AccountPage": {
+    "title": "Account",
+    "placeholder_text": "Your account details will appear here.",
     "signed_in_as": "Signed in as {email}",
     "sign_out_button": "Sign out"
+  },
+  "FavoritesPage": {
+    "title": "Favorites",
+    "empty": "You have no favorite products yet."
+  },
+  "CartPage": {
+    "title": "Shopping cart",
+    "empty": "Your cart is empty.",
+    "quantity_prefix": "Qty: "
   }
 }

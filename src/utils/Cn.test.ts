@@ -20,6 +20,16 @@ describe(cn, () => {
     });
   });
 
+  describe('shop font-size tokens', () => {
+    it('replaces a default size with a shop size', () => {
+      expect(cn('text-base', 'text-body-lg')).toBe('text-body-lg');
+    });
+
+    it('keeps a text color next to a shop size', () => {
+      expect(cn('text-text-strong', 'text-micro')).toBe('text-text-strong text-micro');
+    });
+  });
+
   describe('custom radius tokens', () => {
     it('replaces a default radius with a custom radius', () => {
       expect(cn('rounded-md', 'rounded-button')).toBe('rounded-button');

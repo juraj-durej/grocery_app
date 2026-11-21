@@ -5,12 +5,7 @@ const config: KnipConfig = {
   // the Storybook action mock is aliased in .storybook/main.ts
   entry: ['src/components/ui/**/*.tsx', '.storybook/AuthActions.mock.ts'],
   // Files to exclude from Knip analysis
-  ignore: [
-    'src/libs/I18n.ts',
-    'src/types/I18n.ts',
-    // Kept for upcoming features (i18n navigation)
-    'src/libs/I18nNavigation.ts',
-  ],
+  ignore: ['src/libs/I18n.ts', 'src/types/I18n.ts'],
   ignoreDependencies: [
     // Provides the pglite-server binary, invoked via `sh -c` so Knip can't detect it
     '@electric-sql/pglite-socket',

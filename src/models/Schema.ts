@@ -1,4 +1,15 @@
-import { pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import {
+  boolean,
+  index,
+  integer,
+  pgEnum,
+  pgTable,
+  serial,
+  text,
+  timestamp,
+  unique,
+  uuid,
+} from 'drizzle-orm/pg-core';
 
 // This file defines the structure of your database tables using the Drizzle ORM.
 
@@ -27,3 +38,74 @@ export const usersSchema = pgTable('users', {
     .defaultNow()
     .$onUpdate(() => new Date()),
 }).enableRLS();
+
+export const categorySchema = pgTable('categories', {
+  id: serial('id').primaryKey(),
+  slug: text('slug').notNull().unique(),
+  name: text('name').notNull(),
+  iconUrl: text('icon_url').notNull(),
+  color: text('color').notNull(),
+  sortOrder: integer('sort_order').default(0).notNull(),
+  updatedAt: timestamp('updated_at', { mode: 'date' })
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+  createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
+}).enableRLS();
+
+export const productSchema = pgTable(
+  'products',
+  {
+    id: serial('id').primaryKey(),
+    slug: text('slug').notNull().unique(),
+    categoryId: integer('category_id')
+      .notNull()
+      .references(() => categorySchema.id, { onDelete: 'restrict' }),
+    name: text('name').notNull(),
+    priceCents: integer('price_cents').notNull(),
+    unit: text('unit').notNull(),
+    imageUrl: text('image_url'),
+    color: text('color').notNull(),
+    isNew: boolean('is_new').default(false).notNull(),
+    discountPercent: integer('discount_percent'),
+    isFeatured: boolean('is_featured').default(false).notNull(),
+    featuredOrder: integer('featured_order'),
+    updatedAt: timestamp('updated_at', { mode: 'date' })
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+    createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
+  },
+  (table) => [index('products_category_id_idx').on(table.categoryId)],
+).enableRLS();
+
+export const cartItemSchema = pgTable(
+  'cart_items',
+  {
+    id: serial('id').primaryKey(),
+    sessionId: text('session_id').notNull(),
+    productId: integer('product_id')
+      .notNull()
+      .references(() => productSchema.id, { onDelete: 'cascade' }),
+    quantity: integer('quantity').notNull(),
+    updatedAt: timestamp('updated_at', { mode: 'date' })
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+    createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
+  },
+  (table) => [unique('cart_items_session_product_unique').on(table.sessionId, table.productId)],
+).enableRLS();
+
+export const favoriteSchema = pgTable(
+  'favorites',
+  {
+    id: serial('id').primaryKey(),
+    sessionId: text('session_id').notNull(),
+    productId: integer('product_id')
+      .notNull()
+      .references(() => productSchema.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
+  },
+  (table) => [unique('favorites_session_product_unique').on(table.sessionId, table.productId)],
+).enableRLS();

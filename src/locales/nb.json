@@ -81,13 +81,70 @@
     "back_label": "Tilbake til innlogging",
     "heading": "Glemt passord"
   },
-  "DashboardLayout": {
-    "meta_title": "Hjem",
-    "meta_description": "Hjem i dagligvareappen"
-  },
-  "DashboardPage": {
+  "HomePage": {
     "heading": "Hjem",
+    "meta_title": "Hjem",
+    "meta_description": "Ferske dagligvarer levert til døren.",
+    "categories_title": "Kategorier",
+    "featured_title": "Utvalgte produkter"
+  },
+  "SearchBar": {
+    "placeholder": "Søk etter nøkkelord..",
+    "filter": "Filtre"
+  },
+  "PromoCarousel": {
+    "label": "Kampanjer",
+    "go_to_slide": "Gå til lysbilde {number}",
+    "slide_1": "20 % rabatt på ditt første kjøp",
+    "slide_2": "Gratis levering på bestillinger over 50 USD",
+    "slide_3": "Ferske frukter hver morgen",
+    "slide_4": "Kjøp 2, få 1 gratis på drikke"
+  },
+  "ProductCard": {
+    "badge_new": "NY",
+    "add_to_cart": "Legg i handlekurv",
+    "add_to_favorites": "Legg til i favoritter",
+    "remove_from_favorites": "Fjern fra favoritter",
+    "decrease_quantity": "Reduser antall",
+    "increase_quantity": "Øk antall"
+  },
+  "BottomNav": {
+    "label": "Hovedmeny",
+    "home": "Hjem",
+    "account": "Konto",
+    "favorites": "Favoritter",
+    "cart": "Handlekurv"
+  },
+  "PageHeader": {
+    "back": "Tilbake"
+  },
+  "CategoriesPage": {
+    "title": "Kategorier"
+  },
+  "FeaturedPage": {
+    "title": "Utvalgte produkter"
+  },
+  "SearchPage": {
+    "title": "Søk",
+    "placeholder_text": "Søk kommer snart."
+  },
+  "FilterPage": {
+    "title": "Filtre",
+    "placeholder_text": "Filtre kommer snart."
+  },
+  "AccountPage": {
+    "title": "Konto",
+    "placeholder_text": "Kontoopplysningene dine vises her.",
     "signed_in_as": "Logget inn som {email}",
     "sign_out_button": "Logg ut"
+  },
+  "FavoritesPage": {
+    "title": "Favoritter",
+    "empty": "Du har ingen favorittprodukter ennå."
+  },
+  "CartPage": {
+    "title": "Handlekurv",
+    "empty": "Handlekurven din er tom.",
+    "quantity_prefix": "Antall: "
   }
 }

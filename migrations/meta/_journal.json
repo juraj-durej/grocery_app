@@ -29,6 +29,20 @@
       "when": 1795262467964,
       "tag": "0003_users-enable-rls",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1795293856879,
+      "tag": "0004_shop-catalog",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1795293860881,
+      "tag": "0005_seed-catalog",
+      "breakpoints": true
     }
   ]
 }

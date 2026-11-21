@@ -188,3 +188,65 @@
   border-style: solid;
   border-width: 1.5px;
 }
+
+/* Shop screens: tokens the Figma token set above lacks. */
+@theme {
+  --color-badge-new-bg: #fdefd5;
+  --color-badge-new-text: #e8ad41;
+  --color-badge-sale-bg: #fee4e4;
+  --color-badge-sale-text: #f56262;
+
+  /* Shop text styles use line height "normal" and no letter-spacing, unlike the 3% styles above. */
+  --text-heading-3: 18px;
+  --text-heading-3--line-height: normal;
+  --text-body-lg: 15px;
+  --text-body-lg--line-height: normal;
+  --text-body-sm: 12px;
+  --text-body-sm--line-height: normal;
+  --text-micro: 10px;
+  --text-micro--line-height: normal;
+
+  --radius-field: 5px;
+  --tracking-badge: 0.5px;
+  --drop-shadow-nav: 0 -12px 4.5px rgb(0 0 0 / 0.02);
+}
+
+@utility bg-shop-page {
+  background-color: var(--color-surface);
+  background-image: linear-gradient(180deg, #fff 0, #fff 511px, var(--color-surface) 738px);
+  background-repeat: no-repeat;
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@utility nav-slot-1 {
+  left: calc(8.99% - 11px);
+}
+
+@utility nav-slot-2 {
+  left: calc(32.13% - 11px);
+}
+
+@utility nav-slot-3 {
+  left: calc(55.07% - 11px);
+}
+
+@utility nav-slot-4 {
+  left: 78.02%;
+}
+
+@utility promo-photo {
+  position: absolute;
+  top: -7.77%;
+  left: -20%;
+  width: 128.95%;
+  height: 115.55%;
+  max-width: none;
+  object-fit: cover;
+}

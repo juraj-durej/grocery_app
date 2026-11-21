@@ -16,5 +16,11 @@ test.describe('Sanity', () => {
         page.getByRole('heading', { level: 1, name: 'Welcome to BIG CART' }),
       ).toBeVisible();
     });
+
+    test('displays the featured products', async ({ page }) => {
+      await page.goto('/featured');
+
+      await expect(page.getByRole('heading', { name: 'Featured products' })).toBeVisible();
+    });
   });
 });
