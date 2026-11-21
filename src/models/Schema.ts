@@ -26,4 +26,4 @@ export const usersSchema = pgTable('users', {
     .notNull()
     .defaultNow()
     .$onUpdate(() => new Date()),
-});
+}).enableRLS();

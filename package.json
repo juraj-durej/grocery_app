@@ -8,7 +8,7 @@
     "dev": "scripts/run-cleanly.sh run-p db-server:file dev:*",
     "build:next": "next build",
     "build-local": "scripts/run-cleanly.sh run-p db-server:memory build:next --race",
-    "vercel-build": "next build",
+    "vercel-build": "if [ \"$VERCEL_ENV\" = production ]; then npm run db:migrate; fi && next build",
     "build": "run-s db:migrate build:next",
     "start": "dotenv -c -- next start",
     "analyze": "next experimental-analyze",

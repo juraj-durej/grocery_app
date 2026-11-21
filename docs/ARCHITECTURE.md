@@ -31,7 +31,7 @@ Rules for implementing tickets that contain only Figma designs and no technical 
 | Styling | Tailwind CSS 4.3 (CSS-first) | `src/styles/global.css` | Utilities only; shadcn semantic CSS variables in `:root`/`.dark` mapped via `@theme inline` |
 | Auth | Supabase Auth via `@supabase/ssr` 0.12 | `src/libs/SupabaseServer.ts`, `src/proxy.ts`, `src/actions/AuthActions.ts` | `getUser()` for authorization, never `getSession()` |
 | Client state | Zustand 5.1 (`persist` middleware) | `src/stores/AppStore.ts` | Client components only; session tokens in memory only |
-| Database | Postgres + Drizzle ORM 0.45 / drizzle-kit 0.31 (`pg`); PGlite locally (socket) or in-process in-memory PGlite (`DB_MODE=pglite`, Vercel) | `src/models/Schema.ts`, `src/models/Seed.ts`, `src/libs/DB.ts`, `src/utils/DBConnection.ts`, `migrations/` | Server-only; generate + migrate, never push |
+| Database | Postgres + Drizzle ORM 0.45 / drizzle-kit 0.31 (`pg`); PGlite locally (socket); Supabase Postgres in production (`DB_MODE=postgres`); in-memory PGlite on Vercel previews (`DB_MODE=pglite`) | `src/models/Schema.ts`, `src/models/Seed.ts`, `src/libs/DB.ts`, `src/utils/DBConnection.ts`, `migrations/` | Server-only; generate + migrate, never push |
 | Validation | Zod 4.4 | `src/validations` | One schema shared by client and server |
 | Component library | shadcn/ui 4.23 CLI (style `radix-vega`, `radix-ui` 1.8 primitives, `class-variance-authority` 0.7, `tailwind-merge` 3.7 + `clsx` 2.1 via `cn`, `tw-animate-css`) | `src/components/ui`, `components.json`, `src/utils/Cn.ts` | Generated primitives; compose, do not rebuild; variants via CVA |
 | Icons | lucide-react 1.75 | imported where used | Only icon library (auth field icon exception: see Icons bullet) |
@@ -139,7 +139,7 @@ Rules for implementing tickets that contain only Figma designs and no technical 
 - Local DB is PGlite (`db-server:file`, started by `dev`); production is Postgres through `DATABASE_URL`. Write portable Postgres only.
 - `DB_MODE` (`postgres` default, or `pglite`) selects the driver in `DBConnection.ts`. `pglite` creates an in-memory PGlite in the server process, runs the migrations and `seedDatabase` (`src/models/Seed.ts`) once per instance; `ensureDbReady()` from `@/libs/DB` resolves when done (awaited in `instrumentation.ts` `register()` and before queries). `DATABASE_URL` is required only for `postgres`.
 - Every new table gets deterministic, idempotent, hand-written seed data in `src/models/Seed.ts` in the same PR (no faker).
-- Enable Supabase RLS only if tables are exposed to supabase-js; with Drizzle server access, enforce ownership in queries.
+- Enable RLS (`.enableRLS()`) on every table: Supabase's Data API exposes `public` to the publishable key. Drizzle connects as the owner role, which bypasses RLS, so no policies are needed; still enforce ownership in queries.
 
 ### 4.6 Zod 4 and react-hook-form
 
@@ -268,8 +268,9 @@ Open design questions:
 ### 4.12 Deployment (Vercel)
 
 - `develop` is Vercel production; `main` is ignored; every PR branch gets a preview deployment.
-- Vercel sets `DB_MODE=pglite`: each function instance runs an in-memory PGlite, migrated and seeded at start. Data resets on cold start and is not shared between instances: fine for click-through verification, not for persistence.
-- Vercel runs the `vercel-build` script (`next build`); `build` runs `db:migrate` against `DATABASE_URL`, which does not exist there.
+- Production (`develop`) uses Supabase Postgres: `DB_MODE=postgres` plus a production-only `DATABASE_URL` (Supabase transaction pooler, port 6543, since Vercel has no IPv6 for the direct host). Production is never seeded.
+- Previews keep in-memory PGlite (`DB_MODE=pglite`, preview-only env): each function instance migrates and seeds at start. Data resets on cold start and is not shared between instances: fine for click-through verification, not for persistence.
+- Vercel runs `vercel-build`: `db:migrate` only when `VERCEL_ENV=production` (a failed migration fails the build), then `next build`. Previews only run `next build`.
 - `getBaseUrl()` falls back to the `NEXT_PUBLIC_VERCEL_*` variables when `NEXT_PUBLIC_APP_URL` is unset.
 - Preview and production URLs are public (Vercel Authentication is off). For automation set `PLAYWRIGHT_BASE_URL=<preview url>`; Playwright then skips the local `webServer`. If protection is re-enabled, also set `VERCEL_AUTOMATION_BYPASS_SECRET` and Playwright sends the bypass headers.
 
