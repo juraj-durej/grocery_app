@@ -52,7 +52,7 @@ Rules for implementing tickets that contain only Figma designs and no technical 
 - `src/app/[locale]/` all UI routes. Root `layout.tsx` validates locale and provides `NextIntlClientProvider`.
   - `page.tsx` home page (`WelcomeSlides` carousel, `SlidesCarousel` client leaf, `SlideDots`).
   - Add public pages as route groups (for example `(marketing)/`) and protected pages under `(auth)/dashboard/` (protected by `src/proxy.ts`).
-  - `welcome/`, `sign-up/`, `sign-in/` public auth screens (`AuthScreen` layout). `/sign-up` and `/sign-in` are minimal (hero + heading); the forms come in later tickets. The proxy redirects unauthenticated users to `/sign-in`.
+  - `welcome/`, `sign-up/`, `sign-in/` public auth screens (`AuthScreen` layout). `/sign-in` is minimal (hero + heading); `/sign-up` renders the form UI (email, phone, password, Signup button; submit/validation pending TASK-65). The proxy redirects unauthenticated users to `/sign-in`.
 - `src/app/api/` route handlers, only for external consumers, webhooks or non-form HTTP clients. Not locale-prefixed.
 - `src/app/{robots,sitemap}.ts`, `global-error.tsx` app-level special files.
 - `src/actions/` server actions, one file per domain: `AuthActions.ts`, `<Domain>Actions.ts`.
@@ -276,7 +276,7 @@ Open design questions:
 1. Create `src/app/[locale]/(auth)/dashboard/<route>/page.tsx`. The proxy already guards `/dashboard/*`; no metadata in the page (layout owns it).
 2. In the page, call `createSupabaseServerClient().auth.getUser()` when you need the user; scope all queries by `user.id`.
 3. When a dashboard layout exists, add a nav entry in `dashboard/layout.tsx` with a translated label (create the layout with the dashboard metadata if it does not exist yet).
-4. `/sign-up` and `/sign-in` exist as minimal public screens (hero + heading, no forms yet; `src/app/[locale]/sign-in/page.tsx`). When a ticket adds the forms, render them inside `AuthScreen` with actions in `AuthActions.ts`; `/sign-in` is the proxy redirect target and must not be under `/dashboard`.
+4. `/sign-up` has the form UI (no submit yet) and `/sign-in` is a minimal public screen (hero + heading; `src/app/[locale]/sign-in/page.tsx`). When a ticket adds the forms, render them inside `AuthScreen` with actions in `AuthActions.ts`; `/sign-in` is the proxy redirect target and must not be under `/dashboard`.
 
 ### 5.3 Add a form with a server action
 1. Schema: `src/validations/<Name>Validation.ts` (`z.object`, translated error keys).
