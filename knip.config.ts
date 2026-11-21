@@ -7,9 +7,8 @@ const config: KnipConfig = {
   ignore: [
     'src/libs/I18n.ts',
     'src/types/I18n.ts',
-    // Kept for upcoming features (i18n navigation, database access)
+    // Kept for upcoming features (i18n navigation)
     'src/libs/I18nNavigation.ts',
-    'src/libs/DB.ts',
   ],
   ignoreDependencies: [
     // Provides the pglite-server binary, invoked via `sh -c` so Knip can't detect it

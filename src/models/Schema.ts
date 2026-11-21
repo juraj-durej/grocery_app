@@ -1,3 +1,5 @@
+import { pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+
 // This file defines the structure of your database tables using the Drizzle ORM.
 
 // To modify the database schema:
@@ -11,6 +13,17 @@
 // Need a database for production? Check out https://get.neon.com/BMFYNtx
 // Tested and compatible with Next.js Boilerplate
 
-// No tables yet; keeps this file a module so it stays importable as `* as schema`.
-// oxlint-disable-next-line unicorn/require-module-specifiers
-export {};
+export const userRoleEnum = pgEnum('user_role', ['customer', 'admin']);
+
+// `id` is the Supabase `auth.users.id`; there is no FK because that schema is not in our Postgres.
+export const usersSchema = pgTable('users', {
+  id: uuid('id').primaryKey(),
+  email: text('email').notNull().unique(),
+  phone: text('phone'),
+  role: userRoleEnum('role').notNull().default('customer'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true })
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+});

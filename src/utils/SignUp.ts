@@ -24,7 +24,7 @@ export type SignUpAuthClient = {
 
 export type CreateAccountResult =
   | { status: 'signed_in'; user: AuthUser; session: AuthSession }
-  | { status: 'confirmation_required' }
+  | { status: 'confirmation_required'; user: AuthUser }
   | { status: 'error'; error: 'email_taken' | 'signup_failed' };
 
 /**
@@ -72,5 +72,12 @@ export async function createAccount(options: {
     return { status: 'error', error: 'email_taken' };
   }
 
-  return { status: 'confirmation_required' };
+  return {
+    status: 'confirmation_required',
+    user: {
+      id: data.user.id,
+      email: data.user.email ?? options.input.email,
+      phone: options.input.phone,
+    },
+  };
 }

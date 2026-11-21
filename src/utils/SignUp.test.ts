@@ -52,6 +52,7 @@ describe('create account', () => {
 
     await expect(createAccount({ auth, input })).resolves.toStrictEqual({
       status: 'confirmation_required',
+      user: { id: 'u1', email: 'jane@example.com', phone: '+4712345678' },
     });
   });
 

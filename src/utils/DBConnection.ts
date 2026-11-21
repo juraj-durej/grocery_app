@@ -10,7 +10,7 @@ import { logger } from '@/libs/Logger';
 import * as schema from '@/models/Schema';
 import { seedDatabase } from '@/models/Seed';
 
-type Database = PgDatabase<PgQueryResultHKT, typeof schema>;
+export type Database = PgDatabase<PgQueryResultHKT, typeof schema>;
 
 const createPostgresConnection = (): Database => {
   if (!Env.DATABASE_URL) {

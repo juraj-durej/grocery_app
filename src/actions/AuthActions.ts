@@ -2,9 +2,11 @@
 
 import { getLocale } from 'next-intl/server';
 import * as z from 'zod';
+import { db, ensureDbReady } from '@/libs/DB';
 import { redirect } from '@/libs/I18nNavigation';
 import { logger } from '@/libs/Logger';
 import { createSupabaseServerClient } from '@/libs/SupabaseServer';
+import { saveUser } from '@/models/Users';
 import { createAccount } from '@/utils/SignUp';
 import { SignUpValidation } from '@/validations/SignUpValidation';
 
@@ -28,6 +30,16 @@ export const signUp = async (input: unknown) => {
     auth: supabase.auth,
     input: parsed.data,
   });
+
+  if (result.status === 'signed_in' || result.status === 'confirmation_required') {
+    try {
+      await ensureDbReady();
+      await saveUser({ db, user: result.user });
+    } catch (error) {
+      logger.error('Saving user failed', { userId: result.user.id });
+      throw error;
+    }
+  }
 
   if (result.status === 'signed_in') {
     logger.info('Account created', { userId: result.user.id });
