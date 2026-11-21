@@ -1,23 +1,32 @@
 'use client';
 
 import { EyeOff } from 'lucide-react';
-import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { useId, useState } from 'react';
 
 /**
  * Renders the password input with a lock icon and a show/hide toggle.
+ * @param props - Input attributes (name, placeholder, autoComplete, register props) plus the accessible texts.
+ * @param props.label - The accessible label text.
+ * @param props.showLabel - The accessible label of the toggle while the password is hidden.
+ * @param props.hideLabel - The accessible label of the toggle while the password is visible.
  * @returns The field.
  */
-export function PasswordField() {
-  const t = useTranslations('SignInPage');
+export function PasswordField(
+  props: {
+    label: string;
+    showLabel: string;
+    hideLabel: string;
+  } & Omit<React.ComponentProps<'input'>, 'className' | 'id' | 'type'>,
+) {
+  const { label, showLabel, hideLabel, ...inputProps } = props;
   const id = useId();
   const [visible, setVisible] = useState(false);
 
   return (
     <div className="relative">
       <label htmlFor={id} className="sr-only">
-        {t('password_label')}
+        {label}
       </label>
       <Image
         src="/assets/images/auth/icons/lock.svg"
@@ -29,15 +38,13 @@ export function PasswordField() {
       />
       <input
         id={id}
-        name="password"
+        {...inputProps}
         type={visible ? 'text' : 'password'}
-        autoComplete="current-password"
-        placeholder={t('password_placeholder')}
-        className="h-15 w-full rounded-button bg-white pr-16 pl-18 text-paragraph-1 text-text-strong outline-none placeholder:text-text-secondary focus-visible:ring-3 focus-visible:ring-ring"
+        className="h-15 w-full rounded-button bg-white pr-16 pl-18 text-paragraph-1 text-text-strong outline-none placeholder:text-text-secondary focus-visible:ring-3 focus-visible:ring-ring aria-invalid:ring-3 aria-invalid:ring-destructive/20"
       />
       <button
         type="button"
-        aria-label={visible ? t('hide_password') : t('show_password')}
+        aria-label={visible ? hideLabel : showLabel}
         aria-pressed={visible}
         aria-controls={id}
         onClick={() => {

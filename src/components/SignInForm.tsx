@@ -44,7 +44,14 @@ export function SignInForm() {
         />
       </div>
       <div className="mt-1.25">
-        <PasswordField />
+        <PasswordField
+          name="password"
+          autoComplete="current-password"
+          label={t('password_label')}
+          placeholder={t('password_placeholder')}
+          showLabel={t('show_password')}
+          hideLabel={t('hide_password')}
+        />
       </div>
       <div className="mt-5.25 flex items-center justify-between pr-2.25 pl-2.5 text-paragraph-1">
         <div className="flex items-center gap-2.5 text-text-secondary">

@@ -7,18 +7,14 @@ const config: KnipConfig = {
   ignore: [
     'src/libs/I18n.ts',
     'src/types/I18n.ts',
-    // Kept for upcoming features (auth, i18n navigation, database access)
-    'src/actions/AuthActions.ts',
+    // Kept for upcoming features (i18n navigation, database access)
     'src/libs/I18nNavigation.ts',
-    'src/libs/SupabaseServer.ts',
     'src/libs/DB.ts',
   ],
   ignoreDependencies: [
     // Provides the pglite-server binary, invoked via `sh -c` so Knip can't detect it
     '@electric-sql/pglite-socket',
-    // Kept for upcoming features (forms, component tests)
-    '@hookform/resolvers',
-    'react-hook-form',
+    // Kept for upcoming features (component tests)
     'vitest-browser-react',
   ],
   // Include custom Playwright test file suffixes
