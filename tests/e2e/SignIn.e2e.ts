@@ -38,6 +38,12 @@ type Copy = (typeof copyByLocale)['en'];
 
 const testEmail = process.env.E2E_USER_EMAIL ?? 'anna.novak@example.com';
 const testPassword = process.env.E2E_USER_PASSWORD ?? 'Groceries123';
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+const hasLiveSupabase =
+  Boolean(supabaseKey) &&
+  supabaseKey !== 'dummy_supabase_publishable_key' &&
+  supabaseKey !== 'your_supabase_publishable_key' &&
+  process.env.NEXT_PUBLIC_SUPABASE_URL !== 'http://127.0.0.1:54321';
 const hasCustomAccount = Boolean(process.env.E2E_USER_EMAIL && process.env.E2E_USER_PASSWORD);
 
 // Clicks before hydration are no-ops, so retry the submit until the form reacts.
@@ -185,6 +191,10 @@ for (const locale of ['en', 'nb'] as const) {
       });
 
       test('shows the incorrect credentials error for a wrong password', async ({ page }) => {
+        test.skip(
+          !hasLiveSupabase,
+          'Needs a live Supabase project (set NEXT_PUBLIC_SUPABASE_* secrets)',
+        );
         await page.goto(`${copy.prefix}/sign-in`);
         await fillCredentials(page, copy, 'anna.novak@example.com', 'wrong123');
 
@@ -201,6 +211,8 @@ for (const locale of ['en', 'nb'] as const) {
 }
 
 test.describe('Sign-in successful login', () => {
+  test.skip(!hasLiveSupabase, 'Needs a live Supabase project (set NEXT_PUBLIC_SUPABASE_* secrets)');
+
   const copy = copyByLocale.en;
   const wrongCredentials = (page: Page) => page.getByText(copy.wrongCredentials, { exact: true });
 
