@@ -12,15 +12,11 @@ test.describe('Sanity', () => {
     test('should display the homepage', async ({ page }) => {
       await page.goto('/');
 
-      await expect(
-        page.getByRole('heading', {
-          name: 'Boilerplate Code for Your Next.js Project with Tailwind CSS',
-        }),
-      ).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'Featured products' })).toBeVisible();
     });
 
     test('should navigate to the about page', async ({ page }) => {
-      await page.goto('/');
+      await page.goto('/portfolio');
 
       await page.getByRole('link', { name: 'About' }).click();
 
@@ -30,7 +26,7 @@ test.describe('Sanity', () => {
     });
 
     test('should navigate to the portfolio page', async ({ page }) => {
-      await page.goto('/');
+      await page.goto('/about');
 
       await page.getByRole('link', { name: 'Portfolio' }).click();
 

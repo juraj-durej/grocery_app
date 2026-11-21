@@ -11,12 +11,6 @@
     "footer_text": "© {year} {name}. Made with <author></author>.",
     "main_navigation_label": "Main navigation"
   },
-  "Index": {
-    "meta_title": "Next.js Boilerplate Presentation",
-    "meta_description": "Next js Boilerplate is the perfect starter code for your project. Build your React application with the Next.js framework.",
-    "sponsors_title": "Sponsors",
-    "zap_emoji_label": "Zap"
-  },
   "Counter": {
     "meta_title": "Counter",
     "meta_description": "An example of DB operation",
@@ -64,5 +58,68 @@
   },
   "LocaleSwitcher": {
     "change_language": "Change language"
+  },
+  "HomePage": {
+    "meta_title": "Home",
+    "meta_description": "Fresh groceries delivered to your door.",
+    "categories_title": "Categories",
+    "featured_title": "Featured products"
+  },
+  "SearchBar": {
+    "placeholder": "Search keywords..",
+    "filter": "Filters"
+  },
+  "PromoCarousel": {
+    "label": "Promotions",
+    "go_to_slide": "Go to slide {number}",
+    "slide_1": "20% off on your first purchase",
+    "slide_2": "Free delivery on orders over $50",
+    "slide_3": "Fresh fruits every morning",
+    "slide_4": "Buy 2, get 1 free on beverages"
+  },
+  "ProductCard": {
+    "badge_new": "NEW",
+    "add_to_cart": "Add to cart",
+    "add_to_favorites": "Add to favorites",
+    "remove_from_favorites": "Remove from favorites",
+    "decrease_quantity": "Decrease quantity",
+    "increase_quantity": "Increase quantity"
+  },
+  "BottomNav": {
+    "label": "Main",
+    "home": "Home",
+    "account": "Account",
+    "favorites": "Favorites",
+    "cart": "Cart"
+  },
+  "PageHeader": {
+    "back": "Back"
+  },
+  "CategoriesPage": {
+    "title": "Categories"
+  },
+  "FeaturedPage": {
+    "title": "Featured products"
+  },
+  "SearchPage": {
+    "title": "Search",
+    "placeholder_text": "Search is coming soon."
+  },
+  "FilterPage": {
+    "title": "Filters",
+    "placeholder_text": "Filters are coming soon."
+  },
+  "AccountPage": {
+    "title": "Account",
+    "placeholder_text": "Your account details will appear here."
+  },
+  "FavoritesPage": {
+    "title": "Favorites",
+    "empty": "You have no favorite products yet."
+  },
+  "CartPage": {
+    "title": "Shopping cart",
+    "empty": "Your cart is empty.",
+    "quantity_prefix": "Qty: "
   }
 }

@@ -11,12 +11,6 @@
     "footer_text": "© {year} {name}. Fait avec <author></author>.",
     "main_navigation_label": "Navigation principale"
   },
-  "Index": {
-    "meta_title": "Présentation de Next.js Boilerplate",
-    "meta_description": "Next js Boilerplate est le code de démarrage parfait pour votre projet. Construisez votre application React avec le framework Next.js.",
-    "sponsors_title": "Partenaires",
-    "zap_emoji_label": "Éclair"
-  },
   "Counter": {
     "meta_title": "Compteur",
     "meta_description": "Un exemple d'opération DB",
@@ -64,5 +58,68 @@
   },
   "LocaleSwitcher": {
     "change_language": "Changer de langue"
+  },
+  "HomePage": {
+    "meta_title": "Accueil",
+    "meta_description": "Des produits frais livrés chez vous.",
+    "categories_title": "Catégories",
+    "featured_title": "Produits en vedette"
+  },
+  "SearchBar": {
+    "placeholder": "Rechercher des mots-clés..",
+    "filter": "Filtres"
+  },
+  "PromoCarousel": {
+    "label": "Promotions",
+    "go_to_slide": "Aller à la diapositive {number}",
+    "slide_1": "20 % de réduction sur votre premier achat",
+    "slide_2": "Livraison gratuite dès 50 $ d'achat",
+    "slide_3": "Des fruits frais chaque matin",
+    "slide_4": "2 achetés, 1 offert sur les boissons"
+  },
+  "ProductCard": {
+    "badge_new": "NOUVEAU",
+    "add_to_cart": "Ajouter au panier",
+    "add_to_favorites": "Ajouter aux favoris",
+    "remove_from_favorites": "Retirer des favoris",
+    "decrease_quantity": "Diminuer la quantité",
+    "increase_quantity": "Augmenter la quantité"
+  },
+  "BottomNav": {
+    "label": "Principale",
+    "home": "Accueil",
+    "account": "Compte",
+    "favorites": "Favoris",
+    "cart": "Panier"
+  },
+  "PageHeader": {
+    "back": "Retour"
+  },
+  "CategoriesPage": {
+    "title": "Catégories"
+  },
+  "FeaturedPage": {
+    "title": "Produits en vedette"
+  },
+  "SearchPage": {
+    "title": "Recherche",
+    "placeholder_text": "La recherche arrive bientôt."
+  },
+  "FilterPage": {
+    "title": "Filtres",
+    "placeholder_text": "Les filtres arrivent bientôt."
+  },
+  "AccountPage": {
+    "title": "Compte",
+    "placeholder_text": "Les détails de votre compte apparaîtront ici."
+  },
+  "FavoritesPage": {
+    "title": "Favoris",
+    "empty": "Vous n'avez pas encore de produits favoris."
+  },
+  "CartPage": {
+    "title": "Panier",
+    "empty": "Votre panier est vide.",
+    "quantity_prefix": "Qté : "
   }
 }
