@@ -1,8 +1,17 @@
 import type { KnipConfig } from 'knip';
 
 const config: KnipConfig = {
+  // shadcn/ui primitives are installed ahead of use, treat them as entry points;
+  // the Storybook action mock is aliased in .storybook/main.ts
+  entry: ['src/components/ui/**/*.tsx', '.storybook/AuthActions.mock.ts'],
   // Files to exclude from Knip analysis
   ignore: ['src/libs/I18n.ts', 'src/types/I18n.ts'],
+  ignoreDependencies: [
+    // Provides the pglite-server binary, invoked via `sh -c` so Knip can't detect it
+    '@electric-sql/pglite-socket',
+    // Kept for upcoming features (component tests)
+    'vitest-browser-react',
+  ],
   // Include custom Playwright test file suffixes
   playwright: {
     entry: ['tests/**/*.@(integ|e2e).ts'],

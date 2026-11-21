@@ -20,8 +20,10 @@ const baseConfig: NextConfig = {
   logging: {
     browserToTerminal: process.env.BROWSER_TO_TERMINAL_DISABLED !== 'true',
   },
+  // PGlite loads its wasm/data files at runtime, keep it external and trace them with the migrations into every function
+  serverExternalPackages: ['@electric-sql/pglite'],
   outputFileTracingIncludes: {
-    '/': ['./migrations/**/*'],
+    '/**': ['./migrations/**/*', './node_modules/@electric-sql/pglite/dist/*.{wasm,data}'],
   },
 };
 

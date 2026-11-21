@@ -25,9 +25,9 @@ export const CartControls = (props: { productId: number; quantity: number }) => 
         onClick={() => {
           change(1);
         }}
-        className="flex size-full items-center justify-center gap-2.25 text-body-sm font-medium text-ink"
+        className="flex size-full items-center justify-center gap-2.25 text-body-sm font-medium text-text-strong"
       >
-        <Image src="/icons/bag.svg" alt="" width={13} height={15} />
+        <Image src="/assets/icons/bag.svg" alt="" width={13} height={15} />
         {t('add_to_cart')}
       </button>
     );
@@ -43,11 +43,11 @@ export const CartControls = (props: { productId: number; quantity: number }) => 
         }}
         className="absolute inset-y-0 left-1 flex w-11 items-center justify-center"
       >
-        <Image src="/icons/minus.svg" alt="" width={15} height={2} />
+        <Image src="/assets/icons/minus.svg" alt="" width={15} height={2} />
       </button>
       <span
         data-testid="cart-quantity"
-        className="flex size-full items-center justify-center text-body-sm font-medium text-black"
+        className="flex size-full items-center justify-center text-body-sm font-medium text-text-strong"
       >
         {quantity}
       </span>
@@ -59,7 +59,7 @@ export const CartControls = (props: { productId: number; quantity: number }) => 
         }}
         className="absolute inset-y-0 right-1 flex w-11 items-center justify-center"
       >
-        <Image src="/icons/plus.svg" alt="" width={15} height={12} />
+        <Image src="/assets/icons/plus.svg" alt="" width={15} height={12} />
       </button>
     </div>
   );

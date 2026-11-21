@@ -16,7 +16,7 @@ export const CategoryRow = (props: { categories: Category[] }) => (
           >
             <Image src={category.iconUrl} alt="" width={28} height={28} className="size-7" />
           </span>
-          <span className="text-caption font-medium text-text-muted">{category.name}</span>
+          <span className="text-micro font-medium text-text-secondary">{category.name}</span>
         </Link>
       </li>
     ))}

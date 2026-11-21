@@ -22,7 +22,7 @@ export default async function CartPage(props: { params: Promise<{ locale: string
     <>
       <PageHeader title={t('title')} />
       {lines.length === 0 ? (
-        <p className="px-4 text-body-lg text-text-muted">{t('empty')}</p>
+        <p className="px-4 text-body-lg text-text-secondary">{t('empty')}</p>
       ) : (
         <ul className="flex flex-col gap-3 px-4.25">
           {lines.map((line) => (
@@ -32,13 +32,13 @@ export default async function CartPage(props: { params: Promise<{ locale: string
               className="flex items-center justify-between bg-white p-4"
             >
               <div>
-                <p className="text-body-lg font-semibold text-black">{line.product.name}</p>
-                <p className="text-body-sm font-medium text-text-muted">{line.product.unit}</p>
-                <p className="text-body-sm font-medium text-brand">
+                <p className="text-body-lg font-semibold text-text-strong">{line.product.name}</p>
+                <p className="text-body-sm font-medium text-text-secondary">{line.product.unit}</p>
+                <p className="text-body-sm font-medium text-brand-dark">
                   {formatPrice(line.product.priceCents)}
                 </p>
               </div>
-              <p className="text-body-lg font-medium text-black">
+              <p className="text-body-lg font-medium text-text-strong">
                 {t('quantity_prefix')}
                 <span data-testid="cart-quantity">{line.quantity}</span>
               </p>

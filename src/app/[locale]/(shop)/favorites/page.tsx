@@ -23,7 +23,7 @@ export default async function FavoritesPage(props: { params: Promise<{ locale: s
     <>
       <PageHeader title={t('title')} />
       {products.length === 0 ? (
-        <p className="px-4 text-body-lg text-text-muted">{t('empty')}</p>
+        <p className="px-4 text-body-lg text-text-secondary">{t('empty')}</p>
       ) : (
         <ProductGrid
           products={products}

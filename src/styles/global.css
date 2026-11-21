@@ -1,32 +1,210 @@
 @layer theme, base, components, utilities;
 
 @import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+/* Figma has no dark mode; kept because shadcn components reference dark: classes. */
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* Brand, text and typography tokens from Figma (GroceryApp, Colors and Typography frames). */
+@theme {
+  --color-brand: #aedc81;
+  --color-brand-dark: #6cc51d;
+  --color-brand-light: #ebffd7;
+
+  --color-surface: #f4f5f9;
+  --color-surface-muted: #f5f5f5;
+
+  --color-text-strong: #000000;
+  --color-text-secondary: #868889;
+  --color-text-tertiary: #6f6f6f;
+  /* Fill is #407EC7; the Figma caption says 1A0DAB. Fill used, pending design confirmation. */
+  --color-link: #407ec7;
+  --color-divider: #dadce0;
+  --color-pointer-inactive: #dcdcdc;
+
+  /* Title sizes: caption ladder 15/20/25/30; line heights derived (size + 5), not in Figma. */
+  --text-title-sm: 15px;
+  --text-title-sm--line-height: 20px;
+  --text-title-sm--font-weight: 600;
+  --text-title-md: 20px;
+  --text-title-md--line-height: 25px;
+  --text-title-md--font-weight: 600;
+  --text-title-lg: 25px;
+  --text-title-lg--line-height: 30px;
+  --text-title-lg--font-weight: 600;
+  --text-title-xl: 30px;
+  --text-title-xl--line-height: 36px;
+  --text-title-xl--font-weight: 600;
+  --text-paragraph: 15px;
+  --text-paragraph--line-height: 21px;
+  --text-paragraph--font-weight: 400;
+  /* Figma also lists 10px and 15px for Paragraph Medium. */
+  --text-paragraph-medium: 12px;
+  --text-paragraph-medium--line-height: 21px;
+  --text-paragraph-medium--font-weight: 500;
+  /* Line height 15px is assumed from the caption "Medium - 12 / 15". */
+  --text-label: 12px;
+  --text-label--line-height: 15px;
+  --text-label--font-weight: 500;
+  /* Figma text styles Heading1 (Bold 30, 130%, 3%) and paragraph1 (Medium 15, auto, 3%). */
+  --text-heading-1: 30px;
+  --text-heading-1--line-height: 1.3;
+  --text-heading-1--font-weight: 700;
+  --text-heading-1--letter-spacing: 0.03em;
+  --text-paragraph-1: 15px;
+  --text-paragraph-1--line-height: normal;
+  --text-paragraph-1--font-weight: 500;
+  --text-paragraph-1--letter-spacing: 0.03em;
+
+  /* Figma text style for the auth screens subtitle: Paragraph2 (Regular 15, auto line height, 3% letter-spacing). Not `text-paragraph`, which is 15/21 with no letter-spacing. */
+  --text-paragraph-2: 15px;
+  --text-paragraph-2--line-height: normal;
+  --text-paragraph-2--font-weight: 400;
+  --text-paragraph-2--letter-spacing: 0.03em;
+
+  /* Figma text styles for the welcome screen: Heading2 (SemiBold 25), Toolbar (Medium 18), Caption (Light 15). */
+  --text-heading-2: 25px;
+  --text-heading-2--line-height: normal;
+  --text-heading-2--font-weight: 600;
+  --text-heading-2--letter-spacing: 0.03em;
+  --text-toolbar: 18px;
+  --text-toolbar--line-height: normal;
+  --text-toolbar--font-weight: 500;
+  --text-toolbar--letter-spacing: 0.03em;
+  --text-caption: 15px;
+  --text-caption--line-height: normal;
+  --text-caption--font-weight: 300;
+  --text-caption--letter-spacing: 0.03em;
+
+  --radius-button: 5px;
+  --radius-sheet: 10px;
+  --shadow-brand: 0 10px 9px rgb(108 197 29 / 0.25);
+}
 
 @theme inline {
   --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
 }
 
+:root {
+  --background: #ffffff;
+  --foreground: #202124;
+  --card: #ffffff;
+  --card-foreground: #202124;
+  --popover: #ffffff;
+  --popover-foreground: #202124;
+  /* White on #6CC51D is ~2.5:1, so the foreground is dark. Needs design sign-off. */
+  --primary: #6cc51d;
+  --primary-foreground: #202124;
+  --secondary: #ebffd7;
+  --secondary-foreground: #202124;
+  --muted: #f5f5f5;
+  --muted-foreground: #6f6f6f;
+  --accent: #f4f5f9;
+  --accent-foreground: #202124;
+  --border: #ebebeb;
+  --input: #dadce0;
+  --ring: #aedc81;
+  /* Figma shows 4px only on documentation swatches; used as the base radius until design confirms. */
+  --radius: 0.25rem;
+
+  /* Placeholder - not in Figma */
+  --destructive: #e5484d;
+  --destructive-foreground: #ffffff;
+  /* Placeholder - not in Figma */
+  --chart-1: #6cc51d;
+  --chart-2: #aedc81;
+  --chart-3: #407ec7;
+  --chart-4: #868889;
+  --chart-5: #202124;
+  /* Placeholder - not in Figma */
+  --sidebar: #f4f5f9;
+  --sidebar-foreground: #202124;
+  --sidebar-primary: #6cc51d;
+  --sidebar-primary-foreground: #202124;
+  --sidebar-accent: #ebffd7;
+  --sidebar-accent-foreground: #202124;
+  --sidebar-border: #ebebeb;
+  --sidebar-ring: #aedc81;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+
+/* Figma remember-me switch uses a 1.5px border, which has no default Tailwind width. */
+@utility border-switch {
+  border-style: solid;
+  border-width: 1.5px;
+}
+
+/* Shop screens: tokens the Figma token set above lacks. */
 @theme {
-  --color-brand: #6cc51d;
-  --color-text-muted: #868889;
-  --color-surface: #f4f5f9;
-  --color-divider: #ebebeb;
-  --color-heart: #fe585a;
-  --color-ink: #010101;
-  --color-nav-active: #040404;
   --color-badge-new-bg: #fdefd5;
   --color-badge-new-text: #e8ad41;
   --color-badge-sale-bg: #fee4e4;
   --color-badge-sale-text: #f56262;
 
-  --text-title-md: 18px;
-  --text-title-md--line-height: normal;
+  /* Shop text styles use line height "normal" and no letter-spacing, unlike the 3% styles above. */
+  --text-heading-3: 18px;
+  --text-heading-3--line-height: normal;
   --text-body-lg: 15px;
   --text-body-lg--line-height: normal;
   --text-body-sm: 12px;
   --text-body-sm--line-height: normal;
-  --text-caption: 10px;
-  --text-caption--line-height: normal;
+  --text-micro: 10px;
+  --text-micro--line-height: normal;
 
   --radius-field: 5px;
   --tracking-badge: 0.5px;

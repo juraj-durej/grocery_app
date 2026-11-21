@@ -2,42 +2,44 @@ import { expect, takeSnapshot, test } from '@chromatic-com/playwright';
 
 test.describe('Visual testing', () => {
   test.describe('Static pages', () => {
-    test('should take screenshot of the homepage', async ({ page }, testInfo) => {
+    test('takes a screenshot of the homepage', async ({ page }, testInfo) => {
       await page.goto('/');
+
+      await expect(
+        page.getByRole('heading', { level: 1, name: 'Welcome to BIG CART' }),
+      ).toBeVisible();
+
+      await takeSnapshot(page, testInfo);
+    });
+
+    test('takes a screenshot of the shop home', async ({ page }, testInfo) => {
+      await page.goto('/home');
 
       await expect(page.getByRole('heading', { name: 'Featured products' })).toBeVisible();
 
       await takeSnapshot(page, testInfo);
     });
 
-    test('should take screenshot of the portfolio page', async ({ page }, testInfo) => {
-      await page.goto('/portfolio');
+    test('takes a screenshot of the sign-up page', async ({ page }, testInfo) => {
+      await page.goto('/sign-up');
 
-      await expect(page.getByText('Welcome to my portfolio page!')).toBeVisible();
+      await expect(page.getByRole('heading', { level: 1, name: 'Create account' })).toBeVisible();
 
-      await takeSnapshot(page, testInfo);
-    });
-
-    test('should take screenshot of the about page', async ({ page }, testInfo) => {
-      await page.goto('/about');
-
-      await expect(page.getByText('Welcome to our About page!')).toBeVisible();
+      await page.waitForFunction(() =>
+        [...document.images].every((img) => img.complete && img.naturalWidth > 0),
+      );
 
       await takeSnapshot(page, testInfo);
     });
 
-    test('should take screenshot of the portfolio details page', async ({ page }, testInfo) => {
-      await page.goto('/portfolio/2');
+    test('takes a screenshot of the sign-in page', async ({ page }, testInfo) => {
+      await page.goto('/sign-in');
 
-      await expect(page.getByText('Created a set of promotional')).toBeVisible();
+      await expect(page.getByRole('heading', { level: 1, name: 'Welcome back !' })).toBeVisible();
 
-      await takeSnapshot(page, testInfo);
-    });
-
-    test('should take screenshot of the French homepage', async ({ page }, testInfo) => {
-      await page.goto('/fr');
-
-      await expect(page.getByRole('heading', { name: 'Produits en vedette' })).toBeVisible();
+      await page.waitForFunction(() =>
+        [...document.images].every((img) => img.complete && img.naturalWidth > 0),
+      );
 
       await takeSnapshot(page, testInfo);
     });

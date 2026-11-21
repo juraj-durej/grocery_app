@@ -1,63 +1,94 @@
 {
-  "RootLayout": {
-    "home_link": "Home",
-    "about_link": "About",
-    "counter_link": "Counter",
-    "portfolio_link": "Portfolio",
-    "sign_in_link": "Sign in"
+  "IndexPage": {
+    "meta_title": "Grocery app",
+    "meta_description": "Grocery shopping app",
+    "slide_1_heading": "Welcome to",
+    "logo_alt": "BIG CART",
+    "slide_2_heading": "Buy Quality <br></br>Dairy Products",
+    "slide_3_heading": "Buy Premium <br></br>Quality Fruits",
+    "slide_4_heading": "Get Discounts <br></br>On All Products",
+    "slide_paragraph": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy",
+    "slides_label": "Welcome",
+    "slide_label": "{index} of {total}",
+    "dots_label": "Choose slide",
+    "dot_label": "Go to slide {index}",
+    "get_started_button": "Get started"
   },
-  "BaseTemplate": {
-    "description": "Starter code for your Nextjs Boilerplate with Tailwind CSS",
-    "footer_text": "© {year} {name}. Made with <author></author>.",
-    "main_navigation_label": "Main navigation"
+  "WelcomePage": {
+    "meta_title": "Welcome",
+    "meta_description": "Welcome to the grocery app",
+    "title_bar": "Welcome",
+    "heading": "Welcome",
+    "paragraph": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy",
+    "back_label": "Back",
+    "create_account_button": "Create an account",
+    "login_prompt": "Already have an account ? <login>Login</login>"
   },
-  "Counter": {
-    "meta_title": "Counter",
-    "meta_description": "An example of DB operation",
-    "security_powered_by": "Security, bot detection and rate limiting powered by"
+  "SignUpPage": {
+    "meta_title": "Create account",
+    "meta_description": "Create your grocery app account",
+    "title_bar": "Welcome",
+    "back_label": "Back",
+    "heading": "Create account",
+    "paragraph": "Quickly create account",
+    "form_label": "Create account form",
+    "email_label": "Email address",
+    "email_placeholder": "Email address",
+    "phone_label": "Phone number",
+    "phone_placeholder": "Phone number",
+    "password_label": "Password",
+    "password_placeholder": "Password",
+    "signup_button": "Signup",
+    "login_prompt": "Already have an account ? <login>Login</login>",
+    "show_password": "Show password",
+    "hide_password": "Hide password",
+    "error_email_invalid": "Enter a valid email address",
+    "error_phone_invalid": "Enter a valid phone number",
+    "error_password_too_short": "Password must be at least 8 characters",
+    "error_password_too_long": "Password must be at most 72 characters",
+    "error_email_taken": "This email is already registered",
+    "error_signup_failed": "Could not create account",
+    "confirm_email_message": "Check your email to confirm your account"
   },
-  "CounterForm": {
-    "presentation": "The counter is stored in the database and incremented by the value you provide.",
-    "label_increment": "Increment by",
-    "button_increment": "Increment",
-    "error_increment_range": "Value must be between 1 and 3"
+  "SignInPage": {
+    "meta_title": "Login",
+    "meta_description": "Log in to your grocery app account",
+    "title_bar": "Welcome",
+    "back_label": "Back",
+    "heading": "Welcome back !",
+    "paragraph": "Sign in to your account",
+    "email_label": "Email address",
+    "email_placeholder": "Email Address",
+    "password_label": "Password",
+    "password_placeholder": "Password",
+    "show_password": "Show password",
+    "hide_password": "Hide password",
+    "remember_me": "Remember me",
+    "forgot_password": "Forgot password",
+    "login_button": "Login",
+    "sign_up_prompt": "Don’t have an account ? <signup>Sign up</signup>",
+    "form_label": "Login form",
+    "error_email_required": "Enter your email address",
+    "error_email_invalid": "Enter a valid email address",
+    "error_password_required": "Enter your password",
+    "error_invalid_credentials": "Incorrect email or password",
+    "error_login_failed": "Login failed"
   },
-  "CurrentCount": {
-    "count": "Count: {count}"
-  },
-  "About": {
-    "meta_title": "About",
-    "meta_description": "About page description",
-    "about_paragraph": "Welcome to our About page! We are a team of passionate individuals dedicated to creating amazing software.",
-    "translation_powered_by": "Translation powered by"
-  },
-  "Portfolio": {
-    "meta_title": "Portfolio",
-    "meta_description": "Welcome to my portfolio page!",
-    "presentation": "Welcome to my portfolio page! Here you will find a carefully curated collection of my work and accomplishments. Through this portfolio, I'm to showcase my expertise, creativity, and the value I can bring to your projects.",
-    "portfolio_name": "Portfolio {name}",
-    "error_reporting_powered_by": "Error reporting powered by"
-  },
-  "PortfolioSlug": {
-    "meta_title": "Portfolio {slug}",
-    "meta_description": "Portfolio {slug} description",
-    "header": "Portfolio {slug}",
-    "content": "Created a set of promotional materials and branding elements for a corporate event. Crafted a visually unified theme, encompassing a logo, posters, banners, and digital assets. Integrated the client's brand identity while infusing it with a contemporary and innovative approach.",
-    "code_review_powered_by": "Code review powered by"
-  },
-  "Dashboard": {
-    "hello_message": "Hello {email}!",
-    "alternative_message": "Need advanced features? Multi-tenancy & Teams, Roles & Permissions, Shadcn UI, End-to-End Typesafety with oRPC, Stripe Payment, Light / Dark mode. Try <url></url>.",
-    "max_message": "Or, need a Self-hosted auth stack (Better Auth)? Try <url></url>."
+  "ForgotPasswordPage": {
+    "meta_title": "Password recovery",
+    "meta_description": "Recover access to your grocery app account",
+    "title_bar": "Password Recovery",
+    "back_label": "Back to login",
+    "heading": "Forgot Password"
   },
   "DashboardLayout": {
-    "meta_title": "Dashboard",
-    "meta_description": "Manage your account from the dashboard.",
-    "dashboard_link": "Dashboard",
-    "sign_out": "Sign out"
+    "meta_title": "Home",
+    "meta_description": "Your grocery app home"
   },
-  "LocaleSwitcher": {
-    "change_language": "Change language"
+  "DashboardPage": {
+    "heading": "Home",
+    "signed_in_as": "Signed in as {email}",
+    "sign_out_button": "Sign out"
   },
   "HomePage": {
     "meta_title": "Home",

@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { startTransition, useOptimistic } from 'react';
 import { toggleFavorite } from '@/actions/ShopActions';
+import { cn } from '@/utils/Cn';
 
 export const FavoriteButton = (props: {
   productId: number;
@@ -24,12 +25,12 @@ export const FavoriteButton = (props: {
           await toggleFavorite(props.productId);
         });
       }}
-      className={`flex size-11 items-center justify-center ${props.className ?? ''}`}
+      className={cn('flex size-11 items-center justify-center', props.className)}
     >
       {isFavorite ? (
-        <Image src="/icons/heart-fill.svg" alt="" width={18} height={16} />
+        <Image src="/assets/icons/heart-fill.svg" alt="" width={18} height={16} />
       ) : (
-        <Image src="/icons/heart.svg" alt="" width={16} height={16} />
+        <Image src="/assets/icons/heart.svg" alt="" width={16} height={16} />
       )}
     </button>
   );

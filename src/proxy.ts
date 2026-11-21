@@ -6,6 +6,7 @@ import { NextResponse } from 'next/server';
 import arcjet from '@/libs/Arcjet';
 import { Env } from '@/libs/Env';
 import { SHOP_SESSION_COOKIE, SHOP_SESSION_COOKIE_OPTIONS } from '@/libs/ShopSession';
+import { applyRememberMe, isRememberMe, REMEMBER_ME_COOKIE } from '@/utils/AuthCookies';
 import { routing } from './libs/I18nRouting';
 
 const handleI18nRouting = createMiddleware(routing);
@@ -59,6 +60,7 @@ export default async function proxy(request: NextRequest) {
     return response;
   }
 
+  const remember = isRememberMe(request.cookies.get(REMEMBER_ME_COOKIE)?.value);
   const supabase = createServerClient(
     Env.NEXT_PUBLIC_SUPABASE_URL,
     Env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
@@ -68,7 +70,7 @@ export default async function proxy(request: NextRequest) {
         setAll: (cookiesToSet) => {
           for (const { name, value, options } of cookiesToSet) {
             request.cookies.set(name, value);
-            response.cookies.set(name, value, options);
+            response.cookies.set(name, value, applyRememberMe({ remember, value, options }));
           }
         },
       },

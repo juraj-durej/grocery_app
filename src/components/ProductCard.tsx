@@ -2,23 +2,26 @@ import { getTranslations } from 'next-intl/server';
 import Image from 'next/image';
 import { CartControls } from '@/components/CartControls';
 import { FavoriteButton } from '@/components/FavoriteButton';
+import { Badge } from '@/components/ui/badge';
 import { Link } from '@/libs/I18nNavigation';
 import type { ProductSummary } from '@/types/Shop';
 import { formatPrice } from '@/utils/Helpers';
 
-const Badge = (props: { product: ProductSummary; newLabel: string }) => {
+const badgeClassName = 'absolute top-0 left-0 h-4.5 w-9.5 p-0 text-micro tracking-badge';
+
+const ProductBadge = (props: { product: ProductSummary; newLabel: string }) => {
   if (props.product.discountPercent !== null) {
     return (
-      <span className="absolute top-0 left-0 flex h-4.5 w-9.5 items-center justify-center bg-badge-sale-bg text-caption font-medium tracking-badge text-badge-sale-text">
+      <Badge variant="sale" className={badgeClassName}>
         {`-${props.product.discountPercent}%`}
-      </span>
+      </Badge>
     );
   }
 
   return props.product.isNew ? (
-    <span className="absolute top-0 left-0 flex h-4.5 w-9.5 items-center justify-center bg-badge-new-bg text-caption font-medium tracking-badge text-badge-new-text">
+    <Badge variant="new" className={badgeClassName}>
       {props.newLabel}
-    </span>
+    </Badge>
   ) : null;
 };
 
@@ -54,23 +57,23 @@ export const ProductCard = async (props: {
             className="absolute top-12.5 left-1/2 size-10 -translate-x-1/2 object-contain"
           />
         )}
-        <span className="absolute inset-x-0 top-30.75 text-center text-body-sm font-medium text-brand">
+        <span className="absolute inset-x-0 top-30.75 text-center text-body-sm font-medium text-brand-dark">
           {formatPrice(product.priceCents)}
         </span>
-        <span className="absolute inset-x-0 top-35 px-2 text-center text-body-lg font-semibold text-black">
+        <span className="absolute inset-x-0 top-35 px-2 text-center text-body-lg font-semibold text-text-strong">
           {product.name}
         </span>
-        <span className="absolute inset-x-0 top-41 text-center text-body-sm font-medium text-text-muted">
+        <span className="absolute inset-x-0 top-41 text-center text-body-sm font-medium text-text-secondary">
           {product.unit}
         </span>
       </Link>
-      <Badge product={product} newLabel={t('badge_new')} />
+      <ProductBadge product={product} newLabel={t('badge_new')} />
       <FavoriteButton
         productId={product.id}
         isFavorite={props.isFavorite}
         className="absolute -top-1.25 -right-1.25"
       />
-      <div className="absolute inset-x-0 bottom-0 h-10.25 border-t border-divider">
+      <div className="absolute inset-x-0 bottom-0 h-10.25 border-t border-border">
         <CartControls productId={product.id} quantity={props.quantity} />
       </div>
     </article>

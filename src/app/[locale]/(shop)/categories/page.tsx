@@ -35,7 +35,7 @@ export default async function CategoriesPage(props: { params: Promise<{ locale: 
               >
                 <Image src={category.iconUrl} alt="" width={32} height={32} className="size-8" />
               </span>
-              <span className="text-body-lg font-medium text-black">{category.name}</span>
+              <span className="text-body-lg font-medium text-text-strong">{category.name}</span>
             </Link>
           </li>
         ))}

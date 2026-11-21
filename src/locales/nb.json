@@ -1,0 +1,156 @@
+{
+  "IndexPage": {
+    "meta_title": "Dagligvareapp",
+    "meta_description": "App for dagligvarehandel",
+    "slide_1_heading": "Velkommen til",
+    "logo_alt": "BIG CART",
+    "slide_2_heading": "Kjøp meieriprodukter <br></br>av høy kvalitet",
+    "slide_3_heading": "Kjøp frukt av <br></br>førsteklasses kvalitet",
+    "slide_4_heading": "Få rabatt <br></br>på alle produkter",
+    "slide_paragraph": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy",
+    "slides_label": "Velkommen",
+    "slide_label": "{index} av {total}",
+    "dots_label": "Velg lysbilde",
+    "dot_label": "Gå til lysbilde {index}",
+    "get_started_button": "Kom i gang"
+  },
+  "WelcomePage": {
+    "meta_title": "Velkommen",
+    "meta_description": "Velkommen til dagligvareappen",
+    "title_bar": "Velkommen",
+    "heading": "Velkommen",
+    "paragraph": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy",
+    "back_label": "Tilbake",
+    "create_account_button": "Opprett en konto",
+    "login_prompt": "Har du allerede en konto? <login>Logg inn</login>"
+  },
+  "SignUpPage": {
+    "meta_title": "Opprett konto",
+    "meta_description": "Opprett kontoen din i dagligvareappen",
+    "title_bar": "Velkommen",
+    "back_label": "Tilbake",
+    "heading": "Opprett konto",
+    "paragraph": "Opprett en konto raskt",
+    "form_label": "Skjema for å opprette konto",
+    "email_label": "E-postadresse",
+    "email_placeholder": "E-postadresse",
+    "phone_label": "Telefonnummer",
+    "phone_placeholder": "Telefonnummer",
+    "password_label": "Passord",
+    "password_placeholder": "Passord",
+    "signup_button": "Registrer deg",
+    "login_prompt": "Har du allerede en konto? <login>Logg inn</login>",
+    "show_password": "Vis passord",
+    "hide_password": "Skjul passord",
+    "error_email_invalid": "Skriv inn en gyldig e-postadresse",
+    "error_phone_invalid": "Skriv inn et gyldig telefonnummer",
+    "error_password_too_short": "Passordet må ha minst 8 tegn",
+    "error_password_too_long": "Passordet kan ha maks 72 tegn",
+    "error_email_taken": "Denne e-postadressen er allerede registrert",
+    "error_signup_failed": "Kunne ikke opprette konto",
+    "confirm_email_message": "Sjekk e-posten din for å bekrefte kontoen"
+  },
+  "SignInPage": {
+    "meta_title": "Logg inn",
+    "meta_description": "Logg inn på kontoen din i dagligvareappen",
+    "title_bar": "Velkommen",
+    "back_label": "Tilbake",
+    "heading": "Velkommen tilbake!",
+    "paragraph": "Logg inn på kontoen din",
+    "email_label": "E-postadresse",
+    "email_placeholder": "E-postadresse",
+    "password_label": "Passord",
+    "password_placeholder": "Passord",
+    "show_password": "Vis passord",
+    "hide_password": "Skjul passord",
+    "remember_me": "Husk meg",
+    "forgot_password": "Glemt passord",
+    "login_button": "Logg inn",
+    "sign_up_prompt": "Har du ikke en konto? <signup>Registrer deg</signup>",
+    "form_label": "Innloggingsskjema",
+    "error_email_required": "Skriv inn e-postadressen din",
+    "error_email_invalid": "Skriv inn en gyldig e-postadresse",
+    "error_password_required": "Skriv inn passordet ditt",
+    "error_invalid_credentials": "Feil e-post eller passord",
+    "error_login_failed": "Innloggingen mislyktes"
+  },
+  "ForgotPasswordPage": {
+    "meta_title": "Passordgjenoppretting",
+    "meta_description": "Få tilbake tilgangen til kontoen din i dagligvareappen",
+    "title_bar": "Passordgjenoppretting",
+    "back_label": "Tilbake til innlogging",
+    "heading": "Glemt passord"
+  },
+  "DashboardLayout": {
+    "meta_title": "Hjem",
+    "meta_description": "Hjem i dagligvareappen"
+  },
+  "DashboardPage": {
+    "heading": "Hjem",
+    "signed_in_as": "Logget inn som {email}",
+    "sign_out_button": "Logg ut"
+  },
+  "HomePage": {
+    "meta_title": "Hjem",
+    "meta_description": "Ferske dagligvarer levert til døren.",
+    "categories_title": "Kategorier",
+    "featured_title": "Utvalgte produkter"
+  },
+  "SearchBar": {
+    "placeholder": "Søk etter nøkkelord..",
+    "filter": "Filtre"
+  },
+  "PromoCarousel": {
+    "label": "Kampanjer",
+    "go_to_slide": "Gå til lysbilde {number}",
+    "slide_1": "20 % rabatt på ditt første kjøp",
+    "slide_2": "Gratis levering på bestillinger over 50 USD",
+    "slide_3": "Ferske frukter hver morgen",
+    "slide_4": "Kjøp 2, få 1 gratis på drikke"
+  },
+  "ProductCard": {
+    "badge_new": "NY",
+    "add_to_cart": "Legg i handlekurv",
+    "add_to_favorites": "Legg til i favoritter",
+    "remove_from_favorites": "Fjern fra favoritter",
+    "decrease_quantity": "Reduser antall",
+    "increase_quantity": "Øk antall"
+  },
+  "BottomNav": {
+    "label": "Hovedmeny",
+    "home": "Hjem",
+    "account": "Konto",
+    "favorites": "Favoritter",
+    "cart": "Handlekurv"
+  },
+  "PageHeader": {
+    "back": "Tilbake"
+  },
+  "CategoriesPage": {
+    "title": "Kategorier"
+  },
+  "FeaturedPage": {
+    "title": "Utvalgte produkter"
+  },
+  "SearchPage": {
+    "title": "Søk",
+    "placeholder_text": "Søk kommer snart."
+  },
+  "FilterPage": {
+    "title": "Filtre",
+    "placeholder_text": "Filtre kommer snart."
+  },
+  "AccountPage": {
+    "title": "Konto",
+    "placeholder_text": "Kontoopplysningene dine vises her."
+  },
+  "FavoritesPage": {
+    "title": "Favoritter",
+    "empty": "Du har ingen favorittprodukter ennå."
+  },
+  "CartPage": {
+    "title": "Handlekurv",
+    "empty": "Handlekurven din er tom.",
+    "quantity_prefix": "Antall: "
+  }
+}

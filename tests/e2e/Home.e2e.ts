@@ -1,206 +1,416 @@
 import type { Locator, Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 
-const featured = [
-  { name: 'Fresh Peach', price: '$8.00', unit: 'dozen', badge: null },
-  { name: 'Avacoda', price: '$7.00', unit: '2.0 lbs', badge: 'NEW' },
-  { name: 'Pineapple', price: '$9.90', unit: '1.50 lbs', badge: null },
-  { name: 'Black Grapes', price: '$7.05', unit: '5.0 lbs', badge: '-16%' },
-  { name: 'Pomegranate', price: '$2.09', unit: '1.50 lbs', badge: 'NEW' },
-  { name: 'Fresh B roccoli', price: '$3.00', unit: '1 kg', badge: null },
-];
+const slides = [
+  { position: 1, heading: 'Welcome to BIG CART', photo: 'slide-1-bag.jpg' },
+  { position: 2, heading: 'Buy Quality Dairy Products', photo: 'slide-2-eggs.jpg' },
+  { position: 3, heading: 'Buy Premium Quality Fruits', photo: 'slide-3-mesh-bag.jpg' },
+  { position: 4, heading: 'Get Discounts On All Products', photo: 'slide-4-apple.jpg' },
+] as const;
 
-// Waits for the server action triggered by the click, so the next action reuses the session cookie.
-const clickAndSettle = async (page: Page, button: Locator) => {
-  await Promise.all([
-    page.waitForResponse(
-      (response) =>
-        response.request().method() === 'POST' && 'next-action' in response.request().headers(),
-    ),
-    button.click(),
-  ]);
+const photo = (page: Page, file: string) =>
+  page.locator(`img[src*="${encodeURIComponent(`/assets/images/welcome/${file}`)}"]`);
+
+const expectLoaded = async (image: Locator) => {
+  await expect
+    .poll(
+      async () =>
+        await image.evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth > 0),
+    )
+    .toBe(true);
 };
 
-const card = (page: Page, name: string) =>
-  page.getByRole('article').filter({ hasText: name }).first();
+// Jumps straight to a slide without smooth scrolling so tests do not depend on animation timing.
+const scrollToSlide = async (page: Page, position: number) => {
+  await page.getByRole('main').evaluate((el, index) => {
+    el.style.scrollBehavior = 'auto';
+    el.scrollTo({ left: (index - 1) * el.clientWidth });
+  }, position);
+};
 
-test.describe('Home', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/');
+// Waits until the carousel rests exactly on the given zero-based slide.
+const expectRestingOn = async (page: Page, index: number) => {
+  const carousel = page.getByRole('main');
+  await expect
+    .poll(
+      async () =>
+        await carousel.evaluate(
+          (el, n) => Math.abs(el.scrollLeft - n * el.clientWidth) <= 1,
+          index,
+        ),
+    )
+    .toBe(true);
+};
+
+// Smooth scrolling swallows key presses sent mid-animation, so wait until the carousel rests on a slide.
+const pressArrow = async (page: Page, key: 'ArrowLeft' | 'ArrowRight') => {
+  const carousel = page.getByRole('main');
+  await carousel.focus();
+  await expectRestingOn(page, key === 'ArrowRight' ? 0 : 1);
+  await page.keyboard.press(key);
+};
+
+const activeColor = 'rgb(108, 197, 29)';
+const inactiveColor = 'rgb(220, 220, 220)';
+
+const dot = (page: Page, position: number, name = `Go to slide ${position}`) =>
+  page
+    .getByRole('group', { name: /^(Choose slide|Velg lysbilde)$/u })
+    .getByRole('button', { name });
+
+// Asserts that exactly the given one-based dot is current and green while the other three are grey.
+const expectActiveDot = async (page: Page, position: number) => {
+  await Promise.all(
+    [1, 2, 3, 4].map(async (n) => {
+      const button = dot(page, n);
+      if (n === position) {
+        await expect(button).toHaveAttribute('aria-current', 'true');
+        await expect(button).toHaveCSS('background-color', activeColor);
+      } else {
+        await expect(button).not.toHaveAttribute('aria-current', 'true');
+        await expect(button).toHaveCSS('background-color', inactiveColor);
+      }
+    }),
+  );
+};
+
+test.describe('Home page', () => {
+  test.describe('Welcome slide 1', () => {
+    test('shows the welcome heading, logo, paragraph and bag photo', async ({ page }) => {
+      await page.goto('/');
+
+      const heading = page.getByRole('heading', { level: 1, name: 'Welcome to BIG CART' });
+      await expect(heading).toBeInViewport();
+      await expect(heading.getByRole('img', { name: 'BIG CART' })).toBeInViewport();
+      await expect(
+        page
+          .getByRole('group', { name: '1 of 4' })
+          .getByText('Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy'),
+      ).toBeInViewport();
+      const bag = photo(page, 'slide-1-bag.jpg');
+      await expect(bag).toBeInViewport();
+      await expectLoaded(bag);
+    });
+
+    test('keeps later slides out of the viewport on first load', async ({ page }) => {
+      await page.goto('/');
+
+      await expect(page.getByRole('heading', { level: 2 }).first()).not.toBeInViewport();
+    });
   });
 
-  test.describe('Layout', () => {
-    test('renders sections in design order', async ({ page }) => {
-      const search = page.getByRole('link', { name: 'Search keywords..' });
-      const banner = page.getByText('20% off on your first purchase').first();
-      const categories = page.getByRole('heading', { name: 'Categories' });
-      const featuredTitle = page.getByRole('heading', { name: 'Featured products' });
+  test.describe('Carousel', () => {
+    test('exposes four labelled slides in order', async ({ page }) => {
+      await page.goto('/');
 
-      await expect(search).toBeVisible();
-      await expect(banner).toBeVisible();
-      await expect(categories).toBeVisible();
-      await expect(featuredTitle).toBeVisible();
+      await expect(page.getByRole('main')).toHaveAttribute('aria-roledescription', 'carousel');
+      await expect(page.locator('[role="group"][aria-roledescription="slide"]')).toHaveCount(4);
+      await expect(page.getByRole('group', { name: /^\d of 4$/u })).toHaveText([
+        /Welcome to/u,
+        /Buy Quality\s*Dairy Products/u,
+        /Buy Premium\s*Quality Fruits/u,
+        /Get Discounts\s*On All Products/u,
+      ]);
+    });
 
-      const tops = await Promise.all(
-        [search, banner, categories, featuredTitle].map(async (locator) => {
-          const box = await locator.boundingBox();
-          return box?.y ?? Number.NaN;
+    test('moves to slide 2 with ArrowRight and back to slide 1 with ArrowLeft', async ({
+      page,
+    }) => {
+      await page.goto('/');
+
+      await pressArrow(page, 'ArrowRight');
+      await expectRestingOn(page, 1);
+      await expect(
+        page.getByRole('heading', { level: 2, name: 'Buy Quality Dairy Products' }),
+      ).toBeInViewport();
+
+      await pressArrow(page, 'ArrowLeft');
+      await expectRestingOn(page, 0);
+      await expect(page.getByRole('heading', { level: 1 })).toBeInViewport();
+    });
+
+    test('avoids horizontal page scroll at 375px', async ({ page }) => {
+      await page.setViewportSize({ width: 375, height: 812 });
+      await page.goto('/');
+
+      await expect(page.getByRole('heading', { level: 1 })).toBeInViewport();
+      const overflow = await page.evaluate(
+        () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      );
+      expect(overflow).toBe(0);
+      const widths = await page
+        .locator('[aria-roledescription="slide"]')
+        .evaluateAll((els) => els.map((el) => el.getBoundingClientRect().width));
+      expect(widths).toEqual([375, 375, 375, 375]);
+    });
+  });
+
+  for (const slide of slides.slice(1)) {
+    test.describe(`Welcome slide ${slide.position}`, () => {
+      test('shows the heading and photo after scrolling', async ({ page }) => {
+        await page.goto('/');
+
+        await scrollToSlide(page, slide.position);
+
+        await expect(page.getByRole('heading', { level: 2, name: slide.heading })).toBeInViewport();
+        const image = photo(page, slide.photo);
+        await expect(image).toBeInViewport();
+        await expectLoaded(image);
+      });
+    });
+  }
+
+  test.describe('Page dots', () => {
+    test('shows four dots with the first one active on load', async ({ page }) => {
+      await page.goto('/');
+
+      await expect(page.getByRole('group', { name: 'Choose slide' })).toBeVisible();
+      await expect(page.getByRole('button', { name: /^Go to slide \d$/u })).toHaveCount(4);
+      await expectActiveDot(page, 1);
+    });
+
+    test('sizes each dot 8px round and centres the row 148px above the bottom', async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: 414, height: 896 });
+      await page.goto('/');
+
+      const sizes = await page
+        .getByRole('button', { name: /^Go to slide \d$/u })
+        .evaluateAll((els) =>
+          els.map((el) => {
+            const style = getComputedStyle(el);
+            return {
+              width: style.width,
+              height: style.height,
+              // Tailwind rounded-full computes to a huge value; anything >= half the size is a circle.
+              isCircle: Number(style.borderTopLeftRadius.replace('px', '')) >= 4,
+            };
+          }),
+        );
+      expect(sizes).toEqual(
+        Array.from({ length: 4 }, () => ({ width: '8px', height: '8px', isCircle: true })),
+      );
+      const row = await page.getByRole('group', { name: 'Choose slide' }).boundingBox();
+      expect(row?.width).toBe(48);
+      expect(row?.height).toBe(8);
+      expect(row?.x).toBeCloseTo(183, 0);
+      expect(row?.y).toBeCloseTo(740, 0);
+    });
+
+    // Native scroll-snap swipes are exercised through scroll positions; touch gestures are not reliable in headless Chromium.
+    test('activates each dot in order while scrolling slide 1 to 4', async ({ page }) => {
+      await page.goto('/');
+
+      await scrollToSlide(page, 2);
+      await expectRestingOn(page, 1);
+      await expectActiveDot(page, 2);
+
+      await scrollToSlide(page, 3);
+      await expectRestingOn(page, 2);
+      await expectActiveDot(page, 3);
+
+      await scrollToSlide(page, 4);
+      await expectRestingOn(page, 3);
+      await expectActiveDot(page, 4);
+    });
+
+    test('activates the matching dot when moving with the arrow keys', async ({ page }) => {
+      await page.goto('/');
+
+      await pressArrow(page, 'ArrowRight');
+      await expectRestingOn(page, 1);
+      await expectActiveDot(page, 2);
+
+      await pressArrow(page, 'ArrowLeft');
+      await expectRestingOn(page, 0);
+      await expectActiveDot(page, 1);
+    });
+
+    test('jumps to slide 3 then back to slide 1 when tapping dots', async ({ page }) => {
+      await page.goto('/');
+
+      await dot(page, 3).click();
+      await expectRestingOn(page, 2);
+      await expectActiveDot(page, 3);
+      await expect(
+        page.getByRole('heading', {
+          level: 2,
+          name: 'Buy Premium Quality Fruits',
         }),
-      );
+      ).toBeInViewport();
 
-      expect(tops).toEqual(tops.toSorted((a, b) => a - b));
+      await dot(page, 1).click();
+      await expectRestingOn(page, 0);
+      await expectActiveDot(page, 1);
+      await expect(page.getByRole('heading', { level: 1 })).toBeInViewport();
     });
 
-    test('lists six featured products in design order', async ({ page }) => {
-      const cards = page.getByRole('article');
+    test('stays on slide 4 when pressing ArrowRight on the last slide', async ({ page }) => {
+      await page.goto('/');
+      await scrollToSlide(page, 4);
+      await expectRestingOn(page, 3);
 
-      await expect(cards).toHaveCount(featured.length);
+      await page.getByRole('main').focus();
+      await page.keyboard.press('ArrowRight');
 
-      await Promise.all(
-        featured.map(async (product, index) => {
-          const current = cards.nth(index);
-
-          await expect(current).toContainText(product.name);
-          await expect(current).toContainText(product.price);
-          await expect(current).toContainText(product.unit);
-
-          if (product.badge) {
-            await expect(current).toContainText(product.badge);
-          }
-        }),
-      );
-    });
-  });
-
-  test.describe('Search', () => {
-    test('opens search from the search bar', async ({ page }) => {
-      await page.getByRole('link', { name: 'Search keywords..' }).click();
-
-      await expect(page).toHaveURL(/\/search$/u);
+      await expectRestingOn(page, 3);
+      await expectActiveDot(page, 4);
+      await expect(
+        page.getByRole('heading', { level: 2, name: 'Get Discounts On All Products' }),
+      ).toBeInViewport();
     });
 
-    test('opens filters from the filter icon', async ({ page }) => {
-      await page.getByRole('link', { name: 'Filters' }).click();
+    test('stays on slide 4 when scrolling further forward on the last slide', async ({ page }) => {
+      await page.goto('/');
+      await scrollToSlide(page, 4);
+      await expectRestingOn(page, 3);
 
-      await expect(page).toHaveURL(/\/filter$/u);
-    });
-  });
+      await page.getByRole('main').evaluate((el) => {
+        el.scrollBy({ left: el.clientWidth });
+      });
 
-  test.describe('Categories', () => {
-    test('opens the categories page from the section title', async ({ page }) => {
-      await page.getByRole('heading', { name: 'Categories' }).getByRole('link').click();
-
-      await expect(page).toHaveURL(/\/categories$/u);
-    });
-
-    test('opens the fruits list from the Fruits category', async ({ page }) => {
-      await page.getByRole('link', { name: 'Fruits' }).click();
-
-      await expect(page).toHaveURL(/\/categories\/fruits$/u);
-      await expect(page.getByRole('heading', { level: 1, name: 'Fruits' })).toBeVisible();
-      await expect(card(page, 'Fresh Peach')).toBeVisible();
+      await expectRestingOn(page, 3);
+      await expectActiveDot(page, 4);
+      await expect(
+        page.getByRole('heading', { level: 2, name: 'Get Discounts On All Products' }),
+      ).toBeInViewport();
     });
 
-    test('opens the household list from the last category after scrolling', async ({ page }) => {
-      const household = page.getByRole('link', { name: 'Household' });
+    test('keeps slide 1 shown without any automatic advance', async ({ page }) => {
+      await page.goto('/');
+      await expectActiveDot(page, 1);
 
-      await household.scrollIntoViewIfNeeded();
-      await household.click();
+      // Explicit wait: proves nothing moves on its own.
+      await page.waitForTimeout(3000);
 
-      await expect(page).toHaveURL(/\/categories\/household$/u);
-      await expect(page.getByRole('heading', { level: 1, name: 'Household' })).toBeVisible();
+      await expectRestingOn(page, 0);
+      await expectActiveDot(page, 1);
+    });
+
+    test('keeps the dots at the same viewport position after scrolling', async ({ page }) => {
+      await page.goto('/');
+      const row = page.getByRole('group', { name: 'Choose slide' });
+      const before = await row.boundingBox();
+
+      await scrollToSlide(page, 3);
+      await expectRestingOn(page, 2);
+
+      expect(await row.boundingBox()).toEqual(before);
     });
   });
 
-  test.describe('Cart', () => {
-    test('adds a product and increases its quantity to three', async ({ page }) => {
-      const peach = card(page, 'Fresh Peach');
+  test.describe('Get started button', () => {
+    test('stays at the same position on all four slides', async ({ page }) => {
+      await page.setViewportSize({ width: 414, height: 896 });
+      await page.goto('/');
 
-      await clickAndSettle(page, peach.getByRole('button', { name: 'Add to cart' }));
-      await expect(peach.getByTestId('cart-quantity')).toHaveText('1');
+      const button = page.getByRole('button', { name: 'Get started' });
+      await expect(button).toHaveCount(1);
 
-      await clickAndSettle(page, peach.getByRole('button', { name: 'Increase quantity' }));
-      await expect(peach.getByTestId('cart-quantity')).toHaveText('2');
-      await clickAndSettle(page, peach.getByRole('button', { name: 'Increase quantity' }));
-      await expect(peach.getByTestId('cart-quantity')).toHaveText('3');
+      const measure = async (position: number) => {
+        await scrollToSlide(page, position);
+        await expectRestingOn(page, position - 1);
+        await expect(button).toBeInViewport({ ratio: 1 });
+        return await button.boundingBox();
+      };
+      const first = await measure(1);
+      const second = await measure(2);
+      const third = await measure(3);
+      const fourth = await measure(4);
+      const boxes = [first, second, third, fourth];
 
-      await page.getByRole('link', { name: 'Cart' }).click();
-
-      await expect(page).toHaveURL(/\/cart$/u);
-
-      const line = page.getByTestId('cart-line').filter({ hasText: 'Fresh Peach' });
-
-      await expect(line).toHaveCount(1);
-      await expect(line.getByTestId('cart-quantity')).toHaveText('3');
+      expect(boxes[0]).not.toBeNull();
+      expect(boxes).toEqual([boxes[0], boxes[0], boxes[0], boxes[0]]);
+      expect((boxes[0]?.y ?? 0) + (boxes[0]?.height ?? 0)).toBeGreaterThan(896 / 2);
     });
 
-    test('removes a product when decreasing from quantity one', async ({ page }) => {
-      const peach = card(page, 'Fresh Peach');
+    for (const position of [1, 2, 3]) {
+      test(`advances from slide ${position} to slide ${position + 1}`, async ({ page }) => {
+        await page.goto('/');
+        await scrollToSlide(page, position);
+        await expectRestingOn(page, position - 1);
 
-      await clickAndSettle(page, peach.getByRole('button', { name: 'Add to cart' }));
-      await expect(peach.getByTestId('cart-quantity')).toHaveText('1');
+        await page.getByRole('button', { name: 'Get started' }).click();
 
-      await clickAndSettle(page, peach.getByRole('button', { name: 'Decrease quantity' }));
+        await expectRestingOn(page, position);
+      });
+    }
 
-      await expect(peach.getByRole('button', { name: 'Add to cart' })).toBeVisible();
+    test('navigates from slide 4 to the welcome page', async ({ page }) => {
+      await page.goto('/');
+      await scrollToSlide(page, 4);
+      await expectRestingOn(page, 3);
 
-      await page.getByRole('link', { name: 'Cart' }).click();
+      await page.getByRole('button', { name: 'Get started' }).click();
 
-      await expect(page.getByText('Your cart is empty.')).toBeVisible();
+      await expect(page).toHaveURL(/\/welcome$/u);
+      await expect(page.getByRole('heading', { level: 1, name: 'Welcome' })).toBeVisible();
     });
-  });
 
-  test.describe('Favorites', () => {
-    test('toggles a favorite and reflects it on the favorites page', async ({ page }) => {
-      const grapes = card(page, 'Black Grapes');
+    test('shows slide 1 again when returning from the welcome page', async ({ page }) => {
+      await page.goto('/');
+      await scrollToSlide(page, 4);
+      await expectRestingOn(page, 3);
+      await page.getByRole('button', { name: 'Get started' }).click();
+      await expect(page).toHaveURL(/\/welcome$/u);
 
-      await clickAndSettle(page, grapes.getByRole('button', { name: 'Add to favorites' }));
-      await expect(grapes.getByRole('button', { name: 'Remove from favorites' })).toHaveAttribute(
-        'aria-pressed',
-        'true',
-      );
+      await page.goBack();
 
-      await page.getByRole('link', { name: 'Favorites' }).click();
-
-      await expect(page).toHaveURL(/\/favorites$/u);
-      await expect(card(page, 'Black Grapes')).toBeVisible();
-
-      await page.getByRole('link', { name: 'Home' }).click();
-
-      await expect(page).toHaveURL(/\/$/u);
-
-      const homeGrapes = card(page, 'Black Grapes');
-      const remove = homeGrapes.getByRole('button', { name: 'Remove from favorites' });
-
-      await expect(remove).toHaveAttribute('aria-pressed', 'true');
-
-      await clickAndSettle(page, remove);
-
-      await expect(homeGrapes.getByRole('button', { name: 'Add to favorites' })).toHaveAttribute(
-        'aria-pressed',
-        'false',
-      );
-
-      await page.getByRole('link', { name: 'Favorites' }).click();
-
-      await expect(page.getByText('You have no favorite products yet.')).toBeVisible();
+      await expect(
+        page.getByRole('heading', { level: 1, name: 'Welcome to BIG CART' }),
+      ).toBeInViewport();
     });
-  });
 
-  test.describe('Product detail', () => {
-    test('opens product detail from the card', async ({ page }) => {
-      await card(page, 'Pineapple').getByRole('link').click();
+    test('sits below the page dots without overlapping them', async ({ page }) => {
+      await page.setViewportSize({ width: 414, height: 896 });
+      await page.goto('/');
 
-      await expect(page).toHaveURL(/\/products\/pineapple$/u);
-      await expect(page.getByRole('heading', { level: 1, name: 'Pineapple' })).toBeVisible();
+      const row = await page.getByRole('group', { name: 'Choose slide' }).boundingBox();
+      const button = await page.getByRole('button', { name: 'Get started' }).boundingBox();
+
+      expect((row?.y ?? 0) + (row?.height ?? 0)).toBeLessThanOrEqual(button?.y ?? 0);
+      expect(button?.y).toBeCloseTo(780, 0);
     });
   });
 
-  test.describe('Bottom navigation', () => {
-    test('opens the account page', async ({ page }) => {
-      await page.getByRole('link', { name: 'Account' }).click();
+  test.describe('Norwegian locale', () => {
+    test('displays the translated slide 1 heading', async ({ page }) => {
+      await page.goto('/nb');
 
-      await expect(page).toHaveURL(/\/account$/u);
+      await expect(
+        page.getByRole('heading', { level: 1, name: 'Velkommen til BIG CART' }),
+      ).toBeInViewport();
+    });
+
+    test('labels the get started button in Norwegian', async ({ page }) => {
+      await page.goto('/nb');
+
+      await expect(page.getByRole('button', { name: 'Kom i gang' })).toBeVisible();
+    });
+
+    test('displays the translated slide 2 heading after scrolling', async ({ page }) => {
+      await page.goto('/nb');
+
+      await scrollToSlide(page, 2);
+
+      await expect(
+        page.getByRole('heading', { level: 2, name: /meieriprodukter\s*av høy kvalitet/u }),
+      ).toBeInViewport();
+    });
+
+    test('displays the translated page dot labels', async ({ page }) => {
+      await page.goto('/nb');
+
+      await expect(page.getByRole('group', { name: 'Velg lysbilde' })).toBeVisible();
+      await expect(page.getByRole('button', { name: /^Gå til lysbilde \d$/u })).toHaveText([
+        '',
+        '',
+        '',
+        '',
+      ]);
+      await expect(dot(page, 1, 'Gå til lysbilde 1')).toBeVisible();
+      await expect(dot(page, 4, 'Gå til lysbilde 4')).toBeVisible();
     });
   });
 });

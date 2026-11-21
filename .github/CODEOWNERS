@@ -1,0 +1,8 @@
+# Default owner for everything
+* @juraj-durej
+# CI, agent config and guardrails require owner review
+/.github/ @juraj-durej
+/.claude/ @juraj-durej
+/scripts/ai/ @juraj-durej
+/AGENTS.md @juraj-durej
+/docs/ARCHITECTURE.md @juraj-durej

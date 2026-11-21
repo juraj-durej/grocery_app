@@ -2,11 +2,13 @@ import {
   boolean,
   index,
   integer,
+  pgEnum,
   pgTable,
   serial,
   text,
   timestamp,
   unique,
+  uuid,
 } from 'drizzle-orm/pg-core';
 
 // This file defines the structure of your database tables using the Drizzle ORM.
@@ -22,15 +24,20 @@ import {
 // Need a database for production? Check out https://get.neon.com/BMFYNtx
 // Tested and compatible with Next.js Boilerplate
 
-export const counterSchema = pgTable('counter', {
-  id: serial('id').primaryKey(),
-  count: integer('count').default(0),
-  updatedAt: timestamp('updated_at', { mode: 'date' })
+export const userRoleEnum = pgEnum('user_role', ['customer', 'admin']);
+
+// `id` is the Supabase `auth.users.id`; there is no FK because that schema is not in our Postgres.
+export const usersSchema = pgTable('users', {
+  id: uuid('id').primaryKey(),
+  email: text('email').notNull().unique(),
+  phone: text('phone'),
+  role: userRoleEnum('role').notNull().default('customer'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true })
+    .notNull()
     .defaultNow()
-    .$onUpdate(() => new Date())
-    .notNull(),
-  createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
-});
+    .$onUpdate(() => new Date()),
+}).enableRLS();
 
 export const categorySchema = pgTable('categories', {
   id: serial('id').primaryKey(),
@@ -44,7 +51,7 @@ export const categorySchema = pgTable('categories', {
     .$onUpdate(() => new Date())
     .notNull(),
   createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
-});
+}).enableRLS();
 
 export const productSchema = pgTable(
   'products',
@@ -70,7 +77,7 @@ export const productSchema = pgTable(
     createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
   },
   (table) => [index('products_category_id_idx').on(table.categoryId)],
-);
+).enableRLS();
 
 export const cartItemSchema = pgTable(
   'cart_items',
@@ -88,7 +95,7 @@ export const cartItemSchema = pgTable(
     createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
   },
   (table) => [unique('cart_items_session_product_unique').on(table.sessionId, table.productId)],
-);
+).enableRLS();
 
 export const favoriteSchema = pgTable(
   'favorites',
@@ -101,4 +108,4 @@ export const favoriteSchema = pgTable(
     createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
   },
   (table) => [unique('favorites_session_product_unique').on(table.sessionId, table.productId)],
-);
+).enableRLS();

@@ -1,0 +1,26 @@
+import { useTranslations } from 'next-intl';
+import { AuthScreen } from '@/components/AuthScreen';
+import { SignUpForm } from '@/components/SignUpForm';
+
+/**
+ * Renders the create account screen: hero photo with title bar, and a bottom sheet with the heading, subtitle and account form.
+ * @returns The page landmark.
+ */
+export function SignUpScreen() {
+  const t = useTranslations('SignUpPage');
+
+  return (
+    <AuthScreen
+      photoSrc="/assets/images/auth/sign-up-photo.jpg"
+      photoClassName="-top-5.5 -left-[47.83%] w-[174.4%]"
+      backHref="/welcome"
+      backLabel={t('back_label')}
+      titleBar={t('title_bar')}
+      sheetClassName="min-h-116.5 pt-7.25"
+    >
+      <h1 className="text-heading-2 text-text-strong">{t('heading')}</h1>
+      <p className="mt-0.5 text-paragraph-2 text-text-secondary">{t('paragraph')}</p>
+      <SignUpForm />
+    </AuthScreen>
+  );
+}

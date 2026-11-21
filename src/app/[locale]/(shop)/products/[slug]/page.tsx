@@ -56,11 +56,11 @@ export default async function ProductPage(props: ProductPageProps) {
             className="absolute top-1/2 left-1/2 h-40 w-60 -translate-x-1/2 -translate-y-1/2 object-contain"
           />
         </div>
-        <p className="mt-6 text-body-lg font-medium text-brand">
+        <p className="mt-6 text-body-lg font-medium text-brand-dark">
           {formatPrice(product.priceCents)}
         </p>
-        <p className="mt-1 text-body-sm font-medium text-text-muted">{product.unit}</p>
-        <div className="mx-auto mt-6 h-10.25 w-full max-w-60 border-t border-divider">
+        <p className="mt-1 text-body-sm font-medium text-text-secondary">{product.unit}</p>
+        <div className="mx-auto mt-6 h-10.25 w-full max-w-60 border-t border-border">
           <CartControls productId={product.id} quantity={quantities[product.id] ?? 0} />
         </div>
       </div>

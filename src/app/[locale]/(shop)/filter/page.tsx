@@ -16,7 +16,7 @@ export default async function FilterPage(props: { params: Promise<{ locale: stri
   return (
     <>
       <PageHeader title={t('title')} />
-      <p className="px-4 text-body-lg text-text-muted">{t('placeholder_text')}</p>
+      <p className="px-4 text-body-lg text-text-secondary">{t('placeholder_text')}</p>
     </>
   );
 }
