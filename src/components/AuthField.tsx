@@ -27,7 +27,7 @@ export function AuthField(
       <div className="relative">
         <span
           aria-hidden
-          className="pointer-events-none absolute top-1/2 left-7 flex size-5.75 -translate-y-1/2 items-center text-text-secondary"
+          className="pointer-events-none absolute top-1/2 left-7 flex -translate-y-1/2 items-center"
         >
           {icon}
         </span>
@@ -39,7 +39,7 @@ export function AuthField(
         {trailing && (
           <span
             aria-hidden
-            className="pointer-events-none absolute top-1/2 right-7 flex size-6.5 -translate-y-1/2 items-center text-text-secondary"
+            className="pointer-events-none absolute top-1/2 right-7 flex -translate-y-1/2 items-center"
           >
             {trailing}
           </span>

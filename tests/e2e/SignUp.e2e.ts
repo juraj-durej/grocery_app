@@ -43,7 +43,7 @@ for (const [locale, copy] of Object.entries(copyByLocale)) {
       await expect(phone).toHaveAttribute('placeholder', copy.phone);
       await expect(password).toBeVisible();
       await expect(password).toHaveAttribute('type', 'password');
-      await expect(password).toHaveAttribute('placeholder', '••••••••');
+      await expect(password).toHaveAttribute('placeholder', copy.password);
     });
 
     test('accepts typed text in each field', async ({ page }) => {

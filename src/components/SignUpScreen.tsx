@@ -1,5 +1,5 @@
-import { Eye, LockKeyhole, Mail, Phone } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import Image from 'next/image';
 import { AuthField } from '@/components/AuthField';
 import { AuthScreen } from '@/components/AuthScreen';
 import { Button } from '@/components/ui/button';
@@ -34,7 +34,16 @@ export function SignUpScreen() {
           autoComplete="email"
           label={t('email_label')}
           placeholder={t('email_placeholder')}
-          icon={<Mail className="size-full" />}
+          icon={
+            <Image
+              src="/assets/images/auth/icons/mail.svg"
+              alt=""
+              width={23}
+              height={18}
+              aria-hidden
+              className="h-4.5 w-5.75"
+            />
+          }
         />
         <AuthField
           name="phone"
@@ -43,7 +52,16 @@ export function SignUpScreen() {
           autoComplete="tel"
           label={t('phone_label')}
           placeholder={t('phone_placeholder')}
-          icon={<Phone className="size-full" />}
+          icon={
+            <Image
+              src="/assets/images/auth/icons/phone.svg"
+              alt=""
+              width={23}
+              height={23}
+              aria-hidden
+              className="size-5.75"
+            />
+          }
         />
         <AuthField
           name="password"
@@ -51,8 +69,26 @@ export function SignUpScreen() {
           autoComplete="new-password"
           label={t('password_label')}
           placeholder={t('password_placeholder')}
-          icon={<LockKeyhole className="size-full" />}
-          trailing={<Eye className="size-full" />}
+          icon={
+            <Image
+              src="/assets/images/auth/icons/lock.svg"
+              alt=""
+              width={18}
+              height={23}
+              aria-hidden
+              className="h-5.75 w-4.5"
+            />
+          }
+          trailing={
+            <Image
+              src="/assets/images/auth/icons/eye.svg"
+              alt=""
+              width={27}
+              height={17}
+              aria-hidden
+              className="h-4.25 w-6.75"
+            />
+          }
         />
         <Button type="button" variant="brand" size="brand" className="mt-3">
           {t('signup_button')}

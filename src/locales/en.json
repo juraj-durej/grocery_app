@@ -37,7 +37,7 @@
     "phone_label": "Phone number",
     "phone_placeholder": "Phone number",
     "password_label": "Password",
-    "password_placeholder": "••••••••",
+    "password_placeholder": "Password",
     "signup_button": "Signup",
     "login_prompt": "Already have an account ? <login>Login</login>"
   },
