@@ -66,7 +66,20 @@
     "remember_me": "Husk meg",
     "forgot_password": "Glemt passord",
     "login_button": "Logg inn",
-    "sign_up_prompt": "Har du ikke en konto? <signup>Registrer deg</signup>"
+    "sign_up_prompt": "Har du ikke en konto? <signup>Registrer deg</signup>",
+    "form_label": "Innloggingsskjema",
+    "error_email_required": "Skriv inn e-postadressen din",
+    "error_email_invalid": "Skriv inn en gyldig e-postadresse",
+    "error_password_required": "Skriv inn passordet ditt",
+    "error_invalid_credentials": "Feil e-post eller passord",
+    "error_login_failed": "Innloggingen mislyktes"
+  },
+  "ForgotPasswordPage": {
+    "meta_title": "Passordgjenoppretting",
+    "meta_description": "Få tilbake tilgangen til kontoen din i dagligvareappen",
+    "title_bar": "Passordgjenoppretting",
+    "back_label": "Tilbake til innlogging",
+    "heading": "Glemt passord"
   },
   "DashboardLayout": {
     "meta_title": "Hjem",
