@@ -7,12 +7,10 @@ import arcjet from '@/libs/Arcjet';
 import { Env } from '@/libs/Env';
 import { SHOP_SESSION_COOKIE, SHOP_SESSION_COOKIE_OPTIONS } from '@/libs/ShopSession';
 import { applyRememberMe, isRememberMe, REMEMBER_ME_COOKIE } from '@/utils/AuthCookies';
+import { isProtectedPath, signInPathFor } from '@/utils/ProtectedRoutes';
 import { routing } from './libs/I18nRouting';
 
 const handleI18nRouting = createMiddleware(routing);
-
-const isProtectedRoute = (request: NextRequest) =>
-  /^(\/[^/]+)?\/dashboard(\/.*)?$/u.test(request.nextUrl.pathname);
 
 // Improve security with Arcjet
 const aj = arcjet.withRule(
@@ -56,7 +54,7 @@ export default async function proxy(request: NextRequest) {
     response.cookies.set(SHOP_SESSION_COOKIE, newSessionId, SHOP_SESSION_COOKIE_OPTIONS);
   }
 
-  if (!isProtectedRoute(request)) {
+  if (!isProtectedPath(request.nextUrl.pathname)) {
     return response;
   }
 
@@ -82,9 +80,9 @@ export default async function proxy(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    const locale = request.nextUrl.pathname.match(/(\/.*)\/dashboard/u)?.at(1) ?? '';
-
-    const redirect = NextResponse.redirect(new URL(`${locale}/sign-in`, request.url));
+    const redirect = NextResponse.redirect(
+      new URL(signInPathFor(request.nextUrl.pathname), request.url),
+    );
     if (newSessionId) {
       redirect.cookies.set(SHOP_SESSION_COOKIE, newSessionId, SHOP_SESSION_COOKIE_OPTIONS);
     }

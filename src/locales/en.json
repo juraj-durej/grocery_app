@@ -134,9 +134,9 @@
   },
   "AccountPage": {
     "title": "Account",
-    "placeholder_text": "Your account details will appear here.",
     "signed_in_as": "Signed in as {email}",
-    "sign_out_button": "Sign out"
+    "menu_label": "Account menu",
+    "sign_out": "Sign out"
   },
   "FavoritesPage": {
     "title": "Favorites",
