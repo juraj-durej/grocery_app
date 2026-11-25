@@ -1,6 +1,6 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { PageHeader } from '@/components/PageHeader';
-import { SignOutButton } from '@/components/SignOutButton';
+import { SignOutRow } from '@/components/SignOutRow';
 import { createSupabaseServerClient } from '@/libs/SupabaseServer';
 
 export async function generateMetadata(props: { params: Promise<{ locale: string }> }) {
@@ -23,14 +23,17 @@ export default async function AccountPage(props: { params: Promise<{ locale: str
   return (
     <>
       <PageHeader title={t('title')} />
-      <p className="px-4 text-body-lg text-text-secondary">{t('placeholder_text')}</p>
       {user && (
-        <div className="flex flex-col items-start gap-4 px-4 pt-4">
-          <p className="text-body-lg text-text-secondary">
+        <>
+          <p className="px-4 pb-4 text-body-lg text-text-secondary">
             {t('signed_in_as', { email: user.email ?? '' })}
           </p>
-          <SignOutButton label={t('sign_out_button')} />
-        </div>
+          <ul aria-label={t('menu_label')}>
+            <li>
+              <SignOutRow label={t('sign_out')} />
+            </li>
+          </ul>
+        </>
       )}
     </>
   );

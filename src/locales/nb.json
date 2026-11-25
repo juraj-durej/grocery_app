@@ -134,9 +134,9 @@
   },
   "AccountPage": {
     "title": "Konto",
-    "placeholder_text": "Kontoopplysningene dine vises her.",
     "signed_in_as": "Logget inn som {email}",
-    "sign_out_button": "Logg ut"
+    "menu_label": "Kontomeny",
+    "sign_out": "Logg ut"
   },
   "FavoritesPage": {
     "title": "Favoritter",

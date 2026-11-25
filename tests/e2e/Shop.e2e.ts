@@ -243,10 +243,10 @@ test.describe('Shop featured products', () => {
       );
     });
 
-    test('opens the account page', async ({ page }) => {
+    test('sends a signed-out visitor from Account to the sign-in screen', async ({ page }) => {
       await page.getByRole('link', { name: 'Account' }).click();
 
-      await expect(page).toHaveURL(/\/account$/u);
+      await expect(page).toHaveURL(/\/sign-in$/u);
     });
 
     test('opens the favorites page', async ({ page }) => {
