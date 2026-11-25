@@ -89,7 +89,7 @@ Rules for implementing tickets that contain only Figma designs and no technical 
 - Navigation: import `Link`, `redirect`, `useRouter`, `usePathname` from `@/libs/I18nNavigation`, never from `next/link` or `next/navigation` (except `notFound`). Use locale-less hrefs (`/dashboard`).
 - Images: `next/image` with explicit `width`/`height` or `fill` + `sizes`; static assets in `public/`. Always meaningful `alt` (translated) or `alt=""` if decorative.
 - Fonts: `next/font` in the root layout, wired to a Tailwind token. No `<link>` font tags.
-- `src/proxy.ts` replaces `middleware.ts` (Next 16). It runs Arcjet, i18n routing, and Supabase session refresh for `/dashboard` only. To protect new routes, extend `isProtectedRoute`; keep the matcher excluding `_next`, `api`, static files.
+- `src/proxy.ts` replaces `middleware.ts` (Next 16). It runs Arcjet, i18n routing, and Supabase session refresh for `/dashboard` and `/account` only. To protect new routes, extend `isProtectedPath` (`src/utils/ProtectedRoutes.ts`); keep the matcher excluding `_next`, `api`, static files.
 - Caching: no `use cache` / `cacheComponents` configured. Do not enable them; do not add `export const dynamic`/`revalidate` without reason. Call `router.refresh()` or `revalidatePath` after mutations.
 - Never add `middleware.ts`.
 
